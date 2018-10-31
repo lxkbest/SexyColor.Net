@@ -1,0 +1,163 @@
+﻿@model List<SetRolesPermissionModel>
+@{
+    Layout = "~/Views/Shared/_SystemLayout.cshtml";
+    var rawUrl = RequestHelper.RawUrl(HttpContextCore.Current.Request);
+    IEnumerable<SetRolesPermissionModel> parentsModels = Model.Where(w => w.Parentsid == "0").OrderBy(w => w.DisplayOrder);
+}
+<div class="jsLevelAllCheckBox perssiom_checkbox">
+    <div class="row">
+        <div class="col-md-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_content">
+                    <h2>
+                        <div class="checkbox_tick_box">
+                            <div class="checkbox_tick">
+                                <input class="jsLevelAllCheck" type="checkbox" id="checkAll" name="" />
+                                <label for="checkAll"></label>
+                            </div>
+                        </div>
+                        全选
+                        <button type="submit" form="permissionForm" class="btn btn-success btn-sm pull-right">确定</button>
+                    </h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    @using (Html.BeginAjaxForm("SetRolesPermission", "SystemUser", null, FormMethod.Post, new AjaxFormOptions { DataType = AjaxDataType.Json, OnErrorCallBack = "error", OnSuccessCallBack = "success"}, new { @Class = "row",@id="permissionForm" }))
+    {
+        @Html.Hidden("roleName", ViewData["Rolename"])
+        <div class="col-md-12 col-xs-12">
+            @foreach (var parents in parentsModels)
+            {
+                IEnumerable<SetRolesPermissionModel> childModels = Model.Where(w => w.Parentsid == parents.Itemkey);
+                <div class="jsLevel1CheckAllBox x_panel">
+                    <div class="x_title">
+                        <h2>
+                            <div class="checkbox_tick_box">
+                                <div class="checkbox_tick">
+                                    <input class="jsLevel1CheckAll" type="checkbox" @(parents.IsHave ? "checked=\"checked\"" : "")  id="@parents.Itemkey" value="@parents.Itemkey" name="permission" />
+                                    <label for="@parents.Itemkey"></label>
+                                </div>
+                            </div>
+                            @parents.Itemname
+                        </h2>
+                        <ul class="nav navbar-right panel_toolbox">
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                            <li>
+                                <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                            </li>
+
+                            <li>
+                                <a class="close-link"><i class="fa fa-close"></i></a>
+                            </li>
+                        </ul>
+                        <div class="clearfix">
+                        </div>
+                    </div>
+                    @foreach (var child in childModels)
+                    {
+                        IEnumerable<SetRolesPermissionModel> actionChildModels = Model.Where(w => w.Parentsid == child.Itemkey);
+                        <div class="x_content">
+                            <div class="form-horizontal form_tick">
+                                <div class="form-group jsLevel2CheckAllBox">
+                                    <label class="col-sm-2 col-xs-12 control-label leve2_label">
+                                        <div class="checkbox_tick_box">
+                                            <div class="checkbox_tick">
+                                                <input class="jsLevel2CheckAll" type="checkbox" @(child.IsHave ? "checked=\"checked\"" : "") id="@child.Itemkey" name="permission" value="@child.Itemkey" />
+                                                <label for="@child.Itemkey"></label>
+                                            </div>
+                                        </div>
+                                        @child.Itemname
+                                    </label>
+                                    <div class="jsLevel3CheckBox col-sm-10 col-xs-12 control-label control_label">
+                                        @foreach (var action in actionChildModels)
+                                        {
+                                            <div class="checkbox_tick_box">
+                                                <div class="checkbox_tick">
+                                                    <input type="checkbox" id="@action.Itemkey" @(action.IsHave ? "checked=\"checked\"" : "") name="permission" value="@action.Itemkey"/>
+                                                    <label for="@action.Itemkey"></label>
+                                                </div>
+                                                <label class="text_label noselect" for="@action.Itemkey" unselectable="on">@action.Itemname</label>
+                                               
+                                            </div>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+    }
+</div>
+
+ 
+@section Scripts{
+    <script>
+        $(function () {
+            //全选
+            $('.jsLevelAllCheck').change(function () {
+                var $p = $(this).parents('.jsLevelAllCheckBox'),
+                    $child = $p.find('.jsLevel1CheckAllBox input[type="checkbox"]');
+                if (this.checked) {
+                    $child.prop('checked', true);
+                } else {
+                    $child.prop('checked', false);
+                }
+
+            });
+
+            $('.jsLevel2CheckAll').change(function () {
+                var $p = $(this).parents('.jsLevel2CheckAllBox'),
+                    $child = $p.find('.jsLevel3CheckBox input[type="checkbox"]');
+                if (this.checked) {
+                    $child.prop('checked', true);
+                } else {
+                    $child.prop('checked', false);
+                }
+
+            });
+
+            $('.jsLevel1CheckAll').change(function () {
+                var $p = $(this).parents('.jsLevel1CheckAllBox'),
+                    $child = $p.find('.jsLevel2CheckAllBox input[type="checkbox"]');
+                if (this.checked) {
+                    $child.prop('checked', true);
+                } else {
+                    $child.prop('checked', false);
+                }
+            });
+          
+        });
+
+        function success(data) {
+            if (data.messageType == 1) {
+                swal({
+                    title: data.messageContent,
+                    timer: 1500,
+                    showConfirmButton: false,
+                    type: 'success'
+                });
+                location.reload();
+            } else {
+                swal({
+                    title: data.messageContent,
+                    timer: 1500,
+                    showConfirmButton: false,
+                    type: 'error'
+                });
+            }
+        }
+
+        function error(data) {
+            swal({
+                title: data.messageContent,
+                timer: 1500,
+                showConfirmButton: false,
+                type: 'error'
+            });
+        }
+    </script>
+}
+

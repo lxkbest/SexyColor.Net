@@ -1,0 +1,99 @@
+﻿@model IEnumerable<Roles>
+@{
+    Layout = null;
+    var user = ViewData["user"] as User;
+    IEnumerable<string> userInRoles = user.GetUserInRoles();
+    var count = userInRoles.Count();
+
+}
+
+<div id="setRolesDialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <h4 class="modal-title" id="exampleModalLabel">设置角色</h4>
+        </div>
+        <div class="modal-body">
+            @Html.StatusMessage()
+            @using (Html.BeginAjaxForm("SetRoles", "SystemUser", null, FormMethod.Post, new AjaxFormOptions { DataType = AjaxDataType.Json, OnErrorCallBack = "error", OnSuccessCallBack = "success" }, new { @Class = "form-horizontal" }))
+            {
+                @Html.Hidden("userId", user.UserId)
+                @Html.Hidden("returnUrl", ViewData["returnUrl"])
+
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-xs-2">选择角色：</label>
+                    <div class="col-xs-9">
+                        @foreach (var item in Model)
+                        {
+                            if (!item.ConnectToUser || !item.IsEnabled)
+                            {
+                                continue;
+                            }
+                            bool isCheck = false;
+                            if (userInRoles.Contains(item.Rolename))
+                            {
+                                isCheck = true;
+                            }
+                            <div class="checkbox_tick_box">
+                                <div class="checkbox_tick">
+                                    @if (isCheck)
+                                    {
+                                        <input type="checkbox" id="@item.EntityId" checked="checked" value="@item.Rolename" name="strRoles" />
+                                    }
+                                    else
+                                    {
+
+                                        <input type="checkbox" id="@item.EntityId"  value="@item.Rolename" name="strRoles" />
+                                    }
+
+                                    <label for="@item.EntityId"></label>
+                                </div>
+                                <label class="text_label noselect" for="@item.EntityId" unselectable="on">@item.FriendlyRolename</label>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">确 定</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>
+<script>
+
+    function success(data) {
+        if (data.messageType == 1) {
+            $('#ajaxDialog').modal('hide');
+            var msg = data.messageContent;
+            swal({
+                title: msg,
+                timer: 1500,
+                showConfirmButton: false,
+                type: 'success'
+            });
+            location.reload();
+        } else { 
+            swal({
+                title: msg,
+                timer: 1500,
+                showConfirmButton: false,
+                type: 'error'
+            });
+        }
+    }
+
+    function error(data) {
+        $('#ajaxDialog').modal('hide');
+        swal({
+            title: data.messageContent,
+            timer: 1500,
+            showConfirmButton: false,
+            type: 'error'
+        });
+    }
+</script>

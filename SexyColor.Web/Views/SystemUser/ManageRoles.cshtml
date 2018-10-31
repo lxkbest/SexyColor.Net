@@ -1,0 +1,342 @@
+﻿@model PagingDataSet<Roles>
+@{
+    Layout = "~/Views/Shared/_SystemLayout.cshtml";
+    var currentUrl = RequestHelper.RawUrl(HttpContextCore.Current.Request);
+}
+<div class="">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <ol class="breadcrumb">
+                        <li><a href="#">系统后台</a></li>
+                        <li><a href="#">用户模块</a></li>
+                        <li class="active">角色用户</li>
+                    </ol>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <div class="table-responsive">
+                        @using (Html.BeginForm("ManageRoles", "SystemUser", FormMethod.Get, new { @Class = "form-horizontal form_fixed" }))
+                        {
+                            @Html.Hidden("returnUrl", currentUrl)
+                            <div class="row">
+                                <div class="form-group">
+                                    <label class="control-label">是否是内置用户</label>
+                                    <div class="input_box">
+                                        @Html.DropDownList("isBuiltin", ViewData["IsBuiltin"] as IEnumerable<SelectListItem>, "全部", new { @Class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">是否启用</label>
+                                    <div class="input_box">
+                                        @Html.DropDownList("isEnabled", ViewData["IsEnabled"] as IEnumerable<SelectListItem>, "全部", new { @Class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">是否公开</label>
+                                    <div class="input_box">
+                                        @Html.DropDownList("isPublic", ViewData["IsPublic"] as IEnumerable<SelectListItem>, "全部", new { @Class = "form-control" })
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group">
+                                    <label class="control-label">用户角色</label>
+                                    <div class="input_box">
+                                        <input type="text" name="keyWord" value="@ViewData["Keyword"]" class="form-control" placeholder="用户角色">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label"></label>
+                                    <div class="input_box">
+                                        <button id="jsEmpty" type="button" class="btn btn-default _submit">
+                                            <i class="fa fa-refresh"></i>
+                                            重 置
+                                        </button>
+                                        <button type="submit" class="btn btn-success _submit">
+                                            <i class="fa fa-search"></i>
+                                            搜 索
+                                        </button>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="clearfix"></div>
+                        }
+                        <div class="x_content text-right">
+                            <button type="button" id="jsAdd" class="btn btn-info btn-sm" data-backdrop="static" data-url="@NavigationUrls.Instance().AddRoles()">新增角色</button>
+                            <button type="button" id="jsEnable" class="btn btn-info btn-sm">启用</button>
+                            <button type="button" id="jsDisable" class="btn btn-info btn-sm">未启用</button>
+                            <button type="button" id="jsPublic" class="btn btn-info btn-sm">公开</button>
+                            <button type="button" id="jsUnPublic" class="btn btn-info btn-sm">未公开</button>
+                        </div>
+
+                        @using (Html.BeginForm("", "", FormMethod.Post, new { id = "userRolesForm", @Class = "table_form" }))
+                        {
+
+                            @Html.Hidden("returnUrl", currentUrl)
+                            @if (Model.TotalRecords > 0)
+                            {
+                                <table class="table table-striped jambo_table bulk_action">
+                                    <thead>
+                                        <tr class="headings">
+                                            <th><input type="checkbox" class="allCheck flat"></th>
+                                            <th class="column-title">角色名称</th>
+                                            <th class="column-title">友好显示名称</th>
+                                            <th class="column-title">是否是内置用户</th>
+                                            <th class="column-title">是否公开</th>
+                                            <th class="column-title">是否启用</th>
+                                            <th class="column-title">描述</th>
+                                            <th class="column-title no-link last"> <span class="nobr">操作</span></th>
+                                        </tr>
+                                    </thead>
+                                    @if (Model != null && Model.TotalRecords > 0)
+                                    {
+                                        foreach (Roles role in Model)
+                                        {
+
+                                            <tr class="pointer">
+                                                <td>
+                                                    <label>
+                                                        @Html.CustomCheckBox("customCheck", role.Rolename, false, new { @class = "flat" })
+                                                    </label>
+                                                </td>
+
+                                                <!--角色名称-->
+                                                <td class="td_user">
+                                                    <a href="###" title="@(role.Rolename)" target="_blank">@(role.Rolename.AsTrim(10))</a>
+                                                </td>
+                                                <!--友好显示名称-->
+                                                <td>@(role.FriendlyRolename)</td>
+                                                <!--是否是内置用户-->
+                                                <td>
+                                                    @(role.IsBuiltin ? "是" : "否")
+                                                </td>
+                                                <!--是否公开-->
+                                                <td>@(role.IsPublic ? "是" : "否")</td>
+                                                <!--是否启用-->
+                                                <td>@(role.IsEnabled ? "是" : "否")</td>
+                                                <!--描述-->
+                                                <td>@(role.Description)</td>
+
+                                                <td class="last">
+                                                    <div class="dropdown">
+                                                        <button id="dLabel" class="btn btn-info btn-xs" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            选项
+                                                            <span class="caret"></span>
+                                                        </button>
+                                                        <ul class="dropdown-menu" aria-labelledby="dLabel">
+                                                            <li>
+                                                                <a class="jsEdit" href="###" data-backdrop="static" data-url="@NavigationUrls.Instance().EditRoles(role.Rolename)">
+                                                                编辑角色
+                                                                </a>
+                                                            </li>
+                                                            <li>
+                                                                <a class="jsDelete" href="###" data-backdrop="static" data-url="@NavigationUrls.Instance().DeleteRoles(role.Rolename)">删除角色</a>
+                                                            </li>
+                                                            <li><a href="@NavigationUrls.Instance().SetRolesPermission(role.Rolename,currentUrl)">设置角色权限</a></li>
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                            </tr>
+
+                                        }
+                                    }
+                                </table>
+                                <div>
+                                    @Html.PagingResults(Model)
+                                    @Html.PagingButton(Model)
+                                    <div class="clearfix"></div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="text-center">
+                                    搜索不到数据
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- modal 弹框模板-->
+<div class="modal fade" id="ajaxDialog" tabindex="-1" role="dialog" aria-labelledby="modalLabel" data-backdrop="static">
+    <div id="dialog" class="modal-dialog modal-md" role="document">
+    </div>
+</div>
+
+
+@section Scripts{
+    <script>
+        //表单重置清空
+        $('#jsEmpty').click(function () {
+            var $form = $(this).parents('form');
+            $form.find('input').not(':button, :submit, :reset, :hidden').val('');
+            $form.find('select option[value=""]').prop("selected", true);
+        });
+
+        //校验至少选择一位用户 2017-5-3 10:44:11
+        function verify() {
+            if ($("input[name='customCheck']:checked").length <= 0) {
+                swal({
+                    title: '至少选择一位用户！',
+                    timer: 1500,
+                    showConfirmButton: false,
+                    type: 'error'
+                });
+                return false;
+            } return true;
+        }
+        //全选 
+        $('.allCheck').on('ifClicked', function (event) {
+            var items = document.getElementsByName('customCheck');
+            for (var i = 0; i < items.length; i++) {
+                if (items[i].type == 'checkbox') {
+                    if (this.checked)
+                        $(items[i]).iCheck('uncheck');
+                    else {
+                        $(items[i]).iCheck('check');
+                    }
+                }
+            }
+        });
+        /*
+        全局变量
+        最后修改于：2017-5-3 10:50:43
+        */
+
+        var G_$userRolesForm = $('#userRolesForm'), //用户角色表格表单
+            G_$rolesDialog = $('#ajaxDialog');//编辑弹框
+
+
+        //启用 2017-5-3 10:45:52
+        $('#jsEnable').click(function () {
+            if (!verify()) return false;
+
+            G_$userRolesForm.attr('action', '@NavigationUrls.Instance().EnabledRole(true)');
+            sweetAlert({
+                title: "您确定要启用用户吗?",
+                text: "",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                closeOnConfirm: false
+            }, function () {
+                //确定后回调函数
+                G_$userRolesForm.submit();
+                swal("加载中请稍后......","", "info");
+            });
+
+
+        });
+        //未启用 2017-5-3 17:28:27
+        $('#jsDisable').click(function () {
+            if (!verify()) return false;
+
+            G_$userRolesForm.attr('action','@NavigationUrls.Instance().EnabledRole(false)');
+            sweetAlert({
+                title: "您确定要取消用户启用吗?",
+                text: "",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                closeOnConfirm: false
+            }, function () {
+                //确定后回调函数
+                G_$userRolesForm.submit();
+                swal("加载中请稍后......", "", "info");
+            });
+        });
+        //公开 2017-5-4 11:43:24
+        $("#jsPublic").click(function () {
+           if (!verify()) return false;
+
+           G_$userRolesForm.attr('action', '@NavigationUrls.Instance().PublicRole(true)');
+            sweetAlert({
+                title: "您确定要公开用户吗?",
+                text: "",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                closeOnConfirm: false
+            }, function () {
+                //确定后回调函数
+                G_$userRolesForm.submit();
+                swal("加载中请稍后......", "", "info");
+            });
+        })
+        //未公开 2017-5-4 14:22:48
+        $("#jsUnPublic").click(function () {
+           if (!verify()) return false;
+
+           G_$userRolesForm.attr('action', '@NavigationUrls.Instance().PublicRole(false)');
+            sweetAlert({
+                title: "您确定要取消公开用户吗?",
+                text: "",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                closeOnConfirm: false
+            }, function () {
+                //确定后回调函数
+                G_$userRolesForm.submit();
+                swal("加载中请稍后......", "", "info");
+            });
+        })
+        //编辑角色
+        $(".jsEdit").click(function (e) {
+            e.preventDefault;
+            var url = $(this).data("url");
+
+            $.get(url, function (html) {
+                G_$rolesDialog.find('#dialog').removeClass().addClass("modal-dialog modal-lg").html(html);
+                G_$rolesDialog.modal('show');
+            })
+        });
+        //删除角色
+        $(".jsDelete").click(function (e) {
+            e.preventDefault;
+            var url = $(this).data("url");
+            sweetAlert({
+                title: "您确定要删除用户吗?",
+                text: "",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                closeOnConfirm: false
+            }, function () {
+                //确定后回调函数
+                $.get(url, function (data) {
+                    var msg = data.messageContent;
+                    if (data.messageType == 1) {
+                        swal("",msg,"success");
+                        location.reload();
+                    } else {
+                        swal("",msg,"error");
+                    }
+                })
+            });
+
+        })
+        //新增角色
+        $('#jsAdd').click(function (e) { 
+            e.preventDefault;
+            var url = $(this).data("url");
+
+            $.get(url, function (html) {
+                G_$rolesDialog.find('#dialog').removeClass().addClass("modal-dialog modal-lg").html(html);
+                G_$rolesDialog.modal('show');
+            })
+
+        });
+    </script>
+}

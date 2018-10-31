@@ -1,0 +1,142 @@
+﻿@model LoginModel
+@{
+    Layout = null;
+    StatusMessageData statusData = ViewData.Get<StatusMessageData>("StatusMessageData", null);
+    
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta, title, CSS, favicons, etc. -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>@ViewBag.title</title>
+    <link href="~/bit_favicon.ico" rel="shortcut icon" /> 
+    <!--公共样式-->
+    <!-- Bootstrap -->
+    <link href="~/vendors/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="~/vendors/font-awesome/css/font-awesome.min.css" rel="stylesheet">
+    <!-- NProgress 网页进度条 http://amazeui.org/1.x/javascript/nprogress/-->
+    <link href="~/vendors/nprogress/nprogress.css" rel="stylesheet">
+    <!-- Custom Theme Style -->
+    <link href="~/css/custom.css" rel="stylesheet">
+    <style>
+        .login_content ._3 {
+            position: relative;
+            height: 50px;
+        }
+
+        .login_content img {
+            position: absolute;
+            top: 1px;
+            right: 1px;
+            /* border-radius: 4px; */
+            border-top-right-radius: 4px;
+            border-bottom-right-radius: 4px;
+            border-left: 1px solid #c8c8c8;
+        }
+
+        .login_content form input[type=text]:focus ~ img {
+            border-color: #A878AF;
+        }
+
+        .login_content .submit {
+            padding: 8px 72px;
+        }
+
+        .login_content ._4 {
+            text-align: right;
+        }
+
+            .login_content ._4 a {
+                margin: 0;
+            }
+        .divheight {
+            height: 70px;
+        }
+        .login_content form input[type="text"] {
+            margin: 0 0 10px;
+           
+        }
+        .login_content form input[type="password" i] {
+            margin: 0 0 10px;
+        }
+        .field-validation-error {
+            display: block;
+            text-align:left;
+            margin-left: 5px;
+            width:350px;
+            color:#ff0000;
+        }
+   
+    </style>
+</head>
+
+<body class="login">
+    <div>
+        <a class="hiddenanchor" id="signup"></a>
+        <a class="hiddenanchor" id="signin"></a>
+
+        <div class="login_wrapper">
+            <div class="animate form-horizontal login_form">
+                <section class="login_content">
+                    @using (Html.BeginForm("ManageLogin", "System", FormMethod.Post,new { @id = "loginForm" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        @Html.HiddenFor(w => w.ReturnUrl)
+                        <h1>色月管理系统</h1>
+                        <div class="divheight">
+                            @Html.TextBoxFor(w => w.UserName, new { @value = "admin" ,@class = "form-control", @placeholder = "用户名", @autofocus= "autofocus" })
+ 
+                            @Html.ValidationMessageFor(w => w.UserName)
+                        </div>
+                        <div  class="divheight">
+                            @Html.PasswordFor(w => w.Password, new { @value = "123456", @class = "form-control", @placeholder = "密码", @required = "" })
+                            @Html.ValidationMessageFor(w => w.Password)
+                        </div>
+                        @Html.Captcha(VerifyScenarios.Login, true)
+                        <div>
+                            <button class="btn btn-default submit" type="submit">登录</button>
+                        </div>
+                        <div class="clearfix"></div>
+                        <div class="separator">
+                            <div class="clearfix"></div>
+                            <br />
+                            @{ 
+                                if (statusData != null && statusData.MessageType == StatusMessageType.Error)
+                                {
+                                    @Html.StatusMessage();
+                                }
+                            }
+                            <div>
+                                <h1>sexy color!</h1>
+                                <p>©2017-2017 wgy</p>
+                            </div>
+                        </div>
+                    }
+                </section>
+            </div>
+
+        </div>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.js"></script>
+    <script src="~/lib/jquery-validation/dist/jquery.validate.js"></script>
+    <script src="~/lib/jquery-validation-unobtrusive/jquery.validate.unobtrusive.js"></script>
+    <script>
+        //StatusMessageDiv
+        var G_isLock = false;
+        $("#loginForm").submit(function (e) {
+           
+            if (G_isLock) return false;
+            G_isLock = true;
+            if ($("[name='StatusMessageDiv']").length > 0) {
+                G_isLock = false;
+            }
+        });
+    </script>
+</body>
+</html>

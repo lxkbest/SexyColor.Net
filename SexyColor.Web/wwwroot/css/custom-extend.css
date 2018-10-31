@@ -1,0 +1,425 @@
+body {
+    font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif
+}
+
+.x_title h2 {
+    overflow: initial;
+}
+/*table居中*/
+.table-center {
+    display: table;
+    margin: auto;
+}
+/*hidden*/
+.hide {
+    display: none;
+}
+/*bootstrap select下拉*/
+.dropdown {
+    display: inline-block;
+}
+/*modal 大小*/
+.modal-dialog.modal-lgg {
+    width: 80%;
+}
+/*上传文件按钮*/
+.file-upload {
+    padding-top: 5px !important;
+}
+/*权限*/
+.perssiom_checkbox .form_tick .dropdown {
+    vertical-align: super;
+}
+
+.perssiom_checkbox .dropdown span.caret {
+    color: #fff;
+}
+
+.perssiom_checkbox .form-group .dropdown .btn {
+    margin-bottom: 0;
+}
+
+.perssiom_checkbox .form_tick .leve2_label {
+    font-size: 14px;
+}
+/*内联*/
+.inline-block {
+    display: inline-block;
+}
+
+.table > thead > tr > th {
+    border-bottom: 1px solid #ddd
+}
+/*ztree*/
+.custom_ztree {
+    position: absolute;
+    width: 100%;
+    z-index: 2000;
+    background-color: #fff;
+    display: none;
+    border: 1px solid #ccc;
+}
+
+.table-responsive {
+    overflow-x: initial
+}
+
+    .table-responsive .form-horizontal .form-group {
+        margin-bottom: 15px
+    }
+
+.x_panel {
+    padding-top: 0
+}
+
+.x_title {
+    margin-left: -17px;
+    margin-right: -17px;
+    padding-left: 17px;
+    border-width: 1px
+}
+
+.breadcrumb {
+    background-color: #fff;
+    margin-bottom: 0
+}
+/*两端对齐-左对齐*/
+.left_fix {
+    height: 0;
+    padding: 0;
+    overflow: hidden;
+    display:inline-block;
+    vertical-align:top;
+}
+.justify_fix {
+    display: inline-block;
+    width: 100%;
+    height: 0;
+    overflow: hidden;
+}
+/*头部导航*/
+.nav.navbar-nav > li > a.nav_link {
+    line-height: normal;
+    padding: 4px 10px;
+    color: #fff !important;
+    margin-top:15.5px;
+}
+    .nav.navbar-nav > li > a.nav_link:active,
+    .nav.navbar-nav > li > a.nav_link:focus,
+    .nav.navbar-nav > li > a.nav_link:visited,
+    .nav.navbar-nav > li > a.nav_link:hover {
+        color: #fff;
+        background-color: #31b0d5;
+        border-color: #269abc;
+    }
+/*表格 排序*/
+.jambo_table a.order {
+    color: #fff;
+}
+
+.jambo_table .order_icon {
+    padding: 0 4px;
+}
+
+.table_form .jambo_table {
+    font-size: 1.1em;
+    margin-bottom: 0
+}
+
+    .table_form .jambo_table td {
+        vertical-align: middle
+    }
+
+        .table_form .jambo_table td label {
+            margin-bottom: 0
+        }
+
+.table_form .pagination {
+    float: right
+}
+
+.table_form .info_box {
+    float: left;
+    margin: 20px 0;
+    font-size: 14px
+}
+
+.breadcrumb > .active {
+    color: #1ABB9C
+}
+
+.input-group-addon {
+    background-color: #fff
+}
+
+.form_fixed {
+    display: table;
+    margin: auto;
+    padding-top: 10px;
+    padding-bottom: 10px
+}
+
+    .form_fixed .form-group {
+        display: inline-block;
+        vertical-align: middle
+    }
+
+        .form_fixed .form-group label {
+            width: 96px;
+            display: inline-block;
+            padding-top: 0;
+            vertical-align: middle
+        }
+
+        .form_fixed .form-group .input_box {
+            display: inline-block;
+            padding-left: 10px;
+            padding-right: 10px;
+            vertical-align: middle
+        }
+
+        .form_fixed .form-group input, .form_fixed .form-group select {
+            width: 170px
+        }
+
+        .form_fixed .form-group ._submit {
+            margin-bottom: -2px
+        }
+
+        .form_fixed .form-group .width_170 {
+            width: 170px;
+        }
+
+        .form_fixed .form-group .range_box > * {
+            vertical-align: middle
+        }
+
+        .form_fixed .form-group .range_box .input-group {
+            margin-bottom: 0
+        }
+
+            .form_fixed .form-group .range_box .input-group .input-group-addon {
+                border-radius: 0
+            }
+
+        .form_fixed .form-group .range_box .input_box_2 {
+            display: inline-block;
+            width: 159px;
+        }
+
+        .form_fixed .form-group .range_box ._separator {
+            display: inline-block
+        }
+
+        .form_fixed .form-group .range_box input {
+            width: 120px
+        }
+
+        .form_fixed .form-group .short_box ._separator {
+            display: inline-block
+        }
+
+        .form_fixed .form-group .short_box input {
+            display: inline-block;
+            width: 73px
+        }
+
+.td_user {
+    vertical-align: middle
+}
+
+    .td_user p i {
+        padding: 2px 2px;
+        font-size: 18px
+    }
+
+        .td_user p i.active {
+            color: #d9534f
+        }
+/*错误样式提示*/
+.field-validation-error {
+    color: #d9534f;
+}
+
+label.error {
+    color: #d9534f;
+    font-weight: normal;
+    width: auto;
+    display: block;
+}
+/*禁止文本选择*/
+.noselect {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Chrome/Safari/Opera */
+    -khtml-user-select: none; /* Konqueror */
+    -moz-user-select: none; /* Firefox */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently
+not supported by any browser */
+}
+/*权限菜单*/
+.form_tick .control_label {
+    text-align: left;
+}
+/*权限菜单勾选*/
+.checkbox_tick_box {
+    display: inline-block;
+    padding-left: 10px;
+}
+
+    .checkbox_tick_box .text_label {
+        font-weight: normal;
+        font-size: 14px;
+    }
+    /**
+       * 隐藏默认的checkbox
+       */
+    .checkbox_tick_box input[type=checkbox] {
+        visibility: hidden;
+    }
+/**
+       * Checkbox Five
+       */
+.checkbox_tick {
+    position: relative;
+    display: inline-block;
+    width: 20px;
+}
+
+    /**
+    * Create the box for the checkbox
+    */
+    .checkbox_tick label {
+        cursor: pointer;
+        position: absolute;
+        width: 20px;
+        height: 20px;
+        top: 0;
+        left: 0;
+        background: #fff;
+        border: 1px solid #ddd;
+    }
+        /**
+    * Display the tick inside the checkbox
+    */
+        .checkbox_tick label:after {
+            opacity: 0.2;
+            content: '';
+            position: absolute;
+            width: 11px;
+            height: 6px;
+            background: transparent;
+            top: 6px;
+            left: 4px;
+            border: 2px solid #1ABB9C;
+            border-top: none;
+            border-right: none;
+            transform: rotate(-45deg);
+        }
+        /**
+    * Create the hover event of the tick
+    */
+        .checkbox_tick label:hover::after {
+            opacity: 0.5;
+        }
+
+    /**
+    * Create the checkbox state for the tick
+    */
+    .checkbox_tick input[type=checkbox]:checked + label:after {
+        opacity: 1;
+    }
+/*权限添加*/
+.permission_add_form .width_170 {
+    position: relative;
+}
+
+/*头像*/
+.head_img_box {
+    font-size: 0;
+}
+
+    .head_img_box .left_box,
+    .head_img_box .right_box {
+        display: inline-block;
+    }
+
+    .head_img_box .all_box {
+        display: table;
+        margin: auto;
+        font-size: initial;
+    }
+
+    .head_img_box .right_box {
+        width: 132px;
+        height: 360px;
+        margin-left: 15px;
+        overflow: hidden;
+    }
+
+    .head_img_box .left_box {
+        position: relative;
+    }
+
+    .head_img_box .img_box, .head_img_box .left_box {
+        width: 450px;
+        height: 360px;
+        overflow: hidden;
+    }
+
+    .head_img_box .choose_btn {
+        display: inline-block;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        margin-top: -15px;
+        margin-left: -35px;
+    }
+
+.layer_edit_avatar .preview {
+    padding: 16px;
+    background: #f2f2f5;
+}
+
+.W_tc {
+    text-align: center;
+}
+
+.preview .tit {
+    margin-bottom: 10px;
+}
+
+.preview .avatar {
+    overflow: hidden;
+    margin-bottom: 25px;
+}
+
+.preview .pic_wrap img {
+    max-width: none;
+    border-radius: 0;
+}
+
+.preview .avatar_100 .pic_wrap {
+    width: 100px;
+    height: 100px;
+}
+
+.preview .avatar_50 .pic_wrap {
+    width: 50px;
+    height: 50px;
+}
+
+.preview .avatar .pic_wrap {
+    margin: 0 auto 10px;
+    overflow: hidden;
+}
+
+.W_layer .S_txt2, .W_layer .W_input, .W_layer .W_btn_b_disable, .W_layer .W_btn_b_disable:hover {
+    color: #808080;
+    text-decoration: none;
+}
+
+.preview .avatar_30 .pic_wrap {
+    width: 30px;
+    height: 30px;
+}

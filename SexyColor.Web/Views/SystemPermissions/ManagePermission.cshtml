@@ -1,0 +1,185 @@
+﻿@model IEnumerable<PermissionItems>
+@{
+    Layout = "~/Views/Shared/_SystemLayout.cshtml";
+    var rawUrl = RequestHelper.RawUrl(HttpContextCore.Current.Request);
+    IEnumerable<PermissionItems> parentsModels = Model.Where(w => w.Parentsid == "0").OrderBy(w => w.DisplayOrder);
+}
+@section Styles{
+    <link rel="stylesheet" href="/vendors/ztree/metroStyle/metroStyle.css" />
+}
+<div class="jsLevelAllCheckBox perssiom_checkbox">
+    <div class="row">
+        <div class="col-md-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_content">
+                    <ol class="breadcrumb">
+                        <li><a href="#">系统后台</a></li>
+                        <li><a href="#">权限模块</a></li>
+                        <li class="active">权限功能</li>
+                    </ol>
+                    <div class="clearfix"></div>
+                    <h2>
+                        <button class="btn btn-success btn-sm pull-right operationPermission" data-url="@NavigationUrls.Instance().CreatePermission()">添加权限</button>
+                    </h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 col-xs-12">
+            @foreach (var parents in parentsModels)
+            {
+                IEnumerable<PermissionItems> childModels = Model.Where(w => w.Parentsid == parents.Itemkey).OrderBy(w => w.DisplayOrder);
+            <div class="jsLevel1CheckAllBox x_panel">
+                <div class="x_title">
+                    <h2>
+                        @if (parents.IsNewAction)
+                        {
+                            <img src="/images/new.gif" />
+                        }
+                       
+                        @parents.Itemname
+                        &nbsp;
+                        <div class="dropdown">
+                            <button id="dLabel" class="btn btn-info btn-xs" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                选项
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dLabel">
+                                <li>
+                                    <a href="###" class="btn-link operationPermission" data-url="@NavigationUrls.Instance().DetailsPermission(parents.Itemkey)"><small class="text-success">详情</small></a>
+                                </li>
+                                <li>
+                                    <a href="###" class="btn-link operationPermission" data-url="@NavigationUrls.Instance().EditPermission(parents.Itemkey)"><small class="text-success">编辑</small></a>
+                                </li>
+                                <li>
+                                    <a href="###" class="btn-link operationPermission" data-url="@NavigationUrls.Instance().EditPermission(parents.Itemkey)" data-type="delete"><small class="text-success">删除</small></a>
+                                </li>
+                            </ul>
+                        </div>
+                    </h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li>&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                        <li>
+                            <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                        </li>
+                        <li>
+                            <a class="close-link"><i class="fa fa-close"></i></a>
+                        </li>
+                    </ul>
+                    <div class="clearfix">
+                    </div>
+                </div>
+                @foreach (var child in childModels)
+                {
+                    IEnumerable<PermissionItems> actionChildModels = Model.Where(w => w.Parentsid == child.Itemkey).OrderBy(w => w.DisplayOrder);
+                <div class="x_content">
+                    <div class="form-horizontal form_tick">
+                        <div class="form-group jsLevel2CheckAllBox">
+                            <label class="col-sm-2 col-xs-12 control-label leve2_label">
+                                @if (child.IsNewAction)
+                                {
+                                    <img src="/images/new.gif" style="vertical-align: baseline;"/>
+                                }
+                                @child.Itemname
+                                <div class="dropdown">
+                                    <button id="dLabel" class="btn btn-info btn-xs" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                        选项
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="dLabel">
+                                        <li>
+                                            <a href="###" class="btn-link operationPermission" data-url="@NavigationUrls.Instance().DetailsPermission(child.Itemkey)"><small class="text-success">详情</small></a>
+                                        </li>
+                                        <li>
+                                            <a href="###" class="btn-link operationPermission" data-url="@NavigationUrls.Instance().EditPermission(child.Itemkey)"><small class="text-success">编辑</small></a>
+                                        </li>
+                                        <li>
+                                            <a href="###" class="btn-link operationPermission" data-url="@NavigationUrls.Instance().DeletePermission(child.Itemkey)" data-type="delete"><small class="text-success">删除</small></a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </label>
+                            <div class="jsLevel3CheckBox col-sm-10 col-xs-12 control-label control_label">
+                                @foreach (var action in actionChildModels)
+                                {
+                                <div class="checkbox_tick_box">
+                                    @if (action.IsNewAction)
+                                    {
+                                        <img src="/images/new.gif" style="vertical-align: baseline;" />
+                                    }
+                                    <label class="text_label noselect" for="@action.Itemkey" unselectable="on">@action.Itemname</label>
+                                    <div class="dropdown">
+                                        <button id="dLabel" class="btn btn-info btn-xs" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            选项
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="dLabel">
+                                            <li>
+                                                <a href="###" class="btn-link operationPermission" data-url="@NavigationUrls.Instance().DetailsPermission(action.Itemkey)"><small class="text-success">详情</small></a>
+                                            </li>
+                                            <li>
+                                                <a href="###" class="btn-link operationPermission" data-url="@NavigationUrls.Instance().EditPermission(action.Itemkey)"><small class="text-success">编辑</small></a>
+                                            </li>
+                                            <li>
+                                                <a href="###" class="btn-link operationPermission" data-url="@NavigationUrls.Instance().DeletePermission(action.Itemkey)" data-type="delete"><small class="text-success">删除</small></a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                }
+            </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- modal 弹框模板-->
+<div class="modal fade" id="ajaxDialog" tabindex="-1" role="dialog" aria-labelledby="modalLabel" data-backdrop="static">
+    <div id="dialog" class="modal-dialog modal-md" role="document">
+    </div>
+</div>
+@section Scripts{
+    <script src="/vendors/ztree/jquery.ztree.core.min.js"></script>
+    <script>
+        $(function () {
+            $(".operationPermission").click(function () {
+                var url = $(this).data("url"),
+                    type = $(this).data("type");
+                if (type == "delete") {
+                    sweetAlert({
+                        title: "您确定要删除吗?",
+                        text: "",
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#DD6B55",
+                        closeOnConfirm: false
+                    }, function () {
+                        $.get(url, function (data) {
+                            if (data.messageType == 1) {
+                                swal({
+                                    title: '操作成功！',
+                                    timer: 1500,
+                                    showConfirmButton: false,
+                                    type: 'success'
+                                });
+                                location.reload();
+                            }
+                        })
+                    });
+                } else { 
+                    $.get(url, function (html) {
+                        $("#dialog").removeClass().addClass("modal-dialog modal-lg").html(html);
+                        $('#ajaxDialog').modal('show');
+                    })
+                }
+            })
+        });
+    </script>
+}
+

@@ -1,0 +1,312 @@
+﻿@model PagingDataSet<HomeDynamicSettings>
+@{
+    Layout = "~/Views/Shared/_SystemLayout.cshtml";
+    StatusMessageData statusData = ViewData.Get<StatusMessageData>("StatusMessageData", null);
+}
+<style>
+    #headImageForm {
+        display: inline-block;
+    }
+
+    .form_fixed .form-group .file_upload {
+        padding-top: 5px !important;
+    }
+
+    .preview_img_box {
+        display: inline-block;
+        vertical-align: top;
+        width: 35%;
+        height: 211px;
+    }
+
+        .preview_img_box > img {
+            width: auto;
+            height: 100%;
+            padding-bottom: 20px;
+        }
+</style>
+<div class="row">
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        <div class="x_panel">
+            <div class="x_title">
+                <ol class="breadcrumb">
+                    <li><a href="#">系统后台</a></li>
+                    <li><a href="#">@ViewBag.Module</a></li>
+                    <li class="active">@ViewBag.Site</li>
+                </ol>
+                <div class="clearfix"></div>
+            </div>
+            <div class="x_content">
+                @using (Html.BeginForm("HomeDynamicAddUpdateAsync", "SystemSettings", FormMethod.Post, new { @id = "headImageForm", @class = "form-horizontal", @style = "width:38%;", @enctype = "multipart/form-data" }))
+                {
+                    @Html.Hidden("Id", 0)
+                    @Html.Hidden("Type", (int)DynamicSettingsType.Loop)
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">显示文本</label>
+                        <div class="col-sm-9">
+                            @Html.TextBox("LabelText", "", new { @id = "jsShowText", @class = "form-control" })
+                            @Html.ValidationMessage("LabelText")
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">重定向Url</label>
+                        <div class="col-sm-9">
+                            @Html.TextBox("RedirectUrl", "", new { @id = "jsRedireUrl", @class = "form-control" })
+                            @Html.ValidationMessage("RedirectUrl")
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label">本地图片</label>
+                        <div class="col-sm-9" style="padding-top:4px;">
+                            <input id="jsToggleImg" type="checkbox" checked="checked" class="hide flat">
+                        </div>
+                    </div>
+
+                    <div id="jsImgInput" class="form-group hide">
+                        <label class="col-sm-2 control-label">图片url</label>
+                        <div class="col-sm-9">
+                            @Html.TextBox("ImageUrl", "", new { @id = "jsImgUrl", @class = "form-control" })
+                            @Html.ValidationMessage("ImageUrl")
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-2 control-label"></label>
+                        <div class="col-sm-9">
+                            <button type="submit" class="btn btn-sm btn-success _submit">
+                                <i class="fa fa-save"></i>
+                                保 存
+                            </button>
+                            <div class="inline-block">
+                                <label id="jsImgBtn" for="imgUpload" class="btn btn-sm btn-info file_upload"><i class="fa fa-image"></i> 选择图片</label>
+                                <input id="imgUpload" name="files" type="file" style="display:none;" mulpitle />
+                            </div>
+                        </div>
+                    </div>
+                }
+                <!--图片预览-->
+                <div class="preview_img_box">
+                    <img id="jsPreviewImg" src="" onerror="this.src='/images/img_error.png'" />
+                </div>
+
+                <div class="table-responsive">
+                    @using (Html.BeginForm("", "", FormMethod.Post, new { @Class = "table_form" }))
+                    {
+                        @if (Model != null && Model.TotalRecords > 0)
+                        {
+                            IUserService userService = DIContainer.Resolve<IUserService>();
+                            var firstDynamic = Model.FirstOrDefault<HomeDynamicSettings>();
+                            var lastDynamic = Model.LastOrDefault<HomeDynamicSettings>();
+                            <table class="table table-striped jambo_table bulk_action">
+                                <thead>
+                                    <tr class="headings">
+                                        <th class="column-title">轮换图片</th>
+                                        <th class="column-title">显示文本</th>
+                                        <th class="column-title">重定向Url</th>
+                                        <th class="column-title">操作人</th>
+                                        <th class="column-title">创建时间</th>
+                                        <th class="column-title">最后更新时间</th>
+                                        <th class="column-title no-link last">
+                                            <span class="nobr">操作</span>
+                                        </th>
+                                        <th class="column-title no-link last">
+                                            <span class="nobr">排序</span>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                @foreach (HomeDynamicSettings dynamic in Model)
+                                {
+                                    <tr class="pointer">
+                                        <td class="td_user">
+                                            <img title="@(dynamic.LabelText)" src="@dynamic.ImageUrl" class="jsImgUrlValue" width="130" height="50" />
+                                        </td>
+                                        <td><span class="jsShowTextValue">@dynamic.LabelText</span></td>
+                                        <td>
+                                            <a href="@dynamic.RedirectUrl" target="_blank" class="jsRedireUrlValue">@dynamic.RedirectUrl</a>
+                                        </td>
+                                        <td>@(userService.GetUser(dynamic.Userid).UserName)</td>
+                                        <td>@(dynamic.DateCreated.ToDateString(true))</td>
+                                        <td>@(dynamic.DateLastModified.ToDateString(true))</td>
+                                        <td class="last">
+                                            <button type="button" class="btn show btn-xs btn-info jsChooseBtn" data-id="@dynamic.Id">选择</button>
+                                        </td>
+                                        <td class="last" style="min-width:90px;">
+                                            @if (firstDynamic == dynamic)
+                                            {
+                                                <a href="javascript:void(0)" disabled="disabled" class="fa fa-arrow-up"></a>
+                                            }
+                                            else
+                                            {
+                                                <a href="javascript:void(0)" class="dynamicUp fa fa-arrow-up" data-url="@NavigationUrls.Instance().HomeDisplayOrder()" data-id="@dynamic.Id" data-type="@((int)DynamicSettingsType.Loop)"
+                                                   data-isup="true"></a>
+                                            }
+                                            &nbsp;
+                                            @if (lastDynamic == dynamic)
+                                            {
+                                                <a href="javascript:void(0)" disabled="disabled" class="fa fa-arrow-down"></a>
+                                            }
+                                            else
+                                            {
+                                                <a href="javascript:void(0)" class="dynamicUp fa fa-arrow-down" data-url="@NavigationUrls.Instance().HomeDisplayOrder()" data-id="@dynamic.Id" data-type="@((int)DynamicSettingsType.Loop)"
+                                                   data-isup="false"></a>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </table>
+                            <div>
+                                @Html.PagingResults(Model)
+                                @Html.PagingButton(Model)
+                                <div class="clearfix"></div>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="text-center">
+                                搜索不到数据
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@using (Script.AtFoot())
+{
+    <script type="text/javascript">
+        $('.dynamicUp').click(function () {
+            var url = $(this).data("url");
+            var id = $(this).data("id");
+            var type = $(this).data("type");
+            var isup = $(this).data("isup");
+            $.post(url, { id: id, type: type, isUp: isup }, function (data) {
+                if (data.messageType == 1) {
+                    swal({
+                        title: '操作成功！',
+                        timer: 1500,
+                        showConfirmButton: false,
+                        type: 'success'
+                    });
+                    location.reload();
+                } else {
+                    swal({
+                        title: '操作失败！',
+                        timer: 1500,
+                        showConfirmButton: false,
+                        type: 'error'
+                    });
+                }
+            })
+
+        })
+
+        var imgInput = $("#jsImgInput"),
+            imgBtn = $("#jsImgBtn"),
+            imgCheck = $('#jsToggleImg');
+
+        /*本地图片/外链图片切换*/
+        imgCheck.on('ifChanged', function (event) {
+
+            if (this.checked) {
+                imgInput.addClass("hide");
+                imgBtn.removeClass("hide");
+                if ($(this).data("state") == "edit") {
+                    var imgUrl = $(this).data("url")
+                    imgUrlInput.val(imgUrl);
+                }
+            } else {
+                imgInput.removeClass("hide");
+                imgBtn.addClass("hide");
+                if ($(this).data("state") == "edit") {
+                    var imgUrl = $(this).data("url")
+                    imgUrlInput.val(imgUrl);
+                }
+            }
+
+        });
+
+        /*进行选择操作*/
+        var showTextInput = $("#jsShowText"),
+            redireUrlInput = $("#jsRedireUrl"),
+            imgUrlInput = $("#jsImgUrl"),
+            id = $("#Id"),
+            preImg = $("#jsPreviewImg");
+
+        $(".jsChooseBtn").click(function () {
+            id.val($(this).data("id"));
+            var parent = $(this).closest("tr");
+            showTextInput.val(parent.find(".jsShowTextValue").text());
+            redireUrlInput.val(parent.find(".jsRedireUrlValue").text());
+            var imgUrl = parent.find(".jsImgUrlValue").attr("src");
+            preImg.attr("src", imgUrl);
+            imgCheck.data("state", "edit");
+            imgCheck.data("url", imgUrl);
+        });
+
+
+
+        var G_$EditForm = $("#headImageForm");
+
+        G_$EditForm.submit(function (e) {
+            e.preventDefault();
+            var url = $(this).attr("action"),
+                dataForm = new FormData(this);
+            $.ajax({
+                method: "POST",
+                url: url,
+                data: dataForm,
+                processData: false,
+                contentType: false,
+                success: function (data) {
+                    var msg = data.messageContent;
+                    if (data.messageType === 1) {
+                        swal({ title: msg, timer: 1500, showConfirmButton: false, type: 'success' });
+                        location.reload();
+                    } else {
+                        swal({ title: msg, timer: 1500, showConfirmButton: false, type: 'warning' });
+                    }
+
+                },
+                error: function () {
+                    swal({ title: "未知错误！", timer: 1500, showConfirmButton: false, type: 'error' });
+                }
+            });
+            return false;
+        });
+
+       
+
+
+        /*图片上传预览*/
+        function imagePreview(input, img) {
+            var files = input.files;
+            for (var i = 0; i < files.length; i++) {//预览新添加的图片
+                var file = files[i];
+                var imageType = /^image\//;
+                if (!imageType.test(file.type)) {
+                    swal("请选择图片类型文件上传！", "", "error");
+                } else if ((file.size / 1024 / 1024) > 2) {
+                    swal("请选择小于2M的图片！", "", "error");
+                } else {
+                    img.file = file;
+                    var reader = new FileReader();
+                    reader.onload = (function (aImg) {
+                        return function (e) {
+                            aImg.src = e.target.result;
+                        };
+                    })(img);
+                    reader.readAsDataURL(file);
+                }
+
+            }
+        }
+
+        $("#imgUpload").change(function () { 
+            imagePreview(this, preImg[0]);
+        });
+
+
+    </script>
+}

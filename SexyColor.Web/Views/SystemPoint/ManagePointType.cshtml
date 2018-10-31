@@ -1,0 +1,136 @@
+﻿@model PagingDataSet<PointType>
+@{
+    Layout = "~/Views/Shared/_SystemLayout.cshtml";
+}
+<div class="">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <ol class="breadcrumb">
+                        <li><a href="#">系统后台</a></li>
+                        <li><a href="#">积分模块</a></li>
+                        <li class="active">积分类型</li>
+                    </ol>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <div class="table-responsive">
+                        <div class="x_content text-right">
+                            <button id="addPointTypeBtn" type="button" class="btn btn-sm btn-info">添加积分类型</button>
+                        </div>
+
+                        @using (Html.BeginForm("", "", FormMethod.Get, new { id = "userRolesForm", @Class = "table_form" }))
+                        {
+                            @if (Model.TotalRecords > 0)
+                            {
+                                <table class="table table-striped jambo_table bulk_action">
+                                    <thead>
+                                        <tr class="headings">
+                                         
+                                            <th class="column-title">积分类型名称</th>
+                                            <th class="column-title">限额</th>
+                                            <th class="column-title">描述</th>
+                                            <th class="column-title">排序序号</th>
+                                            <th class="column-title no-link last"> <span class="nobr">操作</span></th>
+                                        </tr>
+                                    </thead>
+                                    @if (Model != null && Model.TotalRecords > 0)
+                                    {
+                                        foreach (PointType pointType in Model)
+                                        {
+                                            <tr class="pointer">
+                                                
+                                                <td class="td_user">@(pointType.Typename)</td>
+                                                <td>@(pointType.QuotaDay)</td>
+                                                <td>@(pointType.Description)</td>
+                                                <td>@(pointType.DisplayOrder)</td>
+
+                                                <td class="last">
+                                                        <div class="dropdown">
+                                                            <button id="dLabel" class="btn btn-info btn-xs" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                                选项
+                                                                <span class="caret"></span>
+                                                            </button>
+                                                            <ul class="dropdown-menu" aria-labelledby="dLabel">
+                                                                <li>
+                                                                    <a class="jsEdit" href="###" data-backdrop="static" data-url="@NavigationUrls.Instance().EditPointType(pointType.Typekey)">
+                                                                        编辑
+                                                                    </a>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                            </tr>
+
+                                        }
+                                    }
+                                </table>
+                                <div>
+                                    @Html.PagingResults(Model)
+                                    @Html.PagingButton(Model)
+                                    <div class="clearfix"></div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="text-center">
+                                    搜索不到数据
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- modal 弹框模板-->
+<div class="modal fade" id="ajaxDialog" tabindex="-1" role="dialog" aria-labelledby="modalLabel" data-backdrop="static">
+    <div id="dialog" class="modal-dialog modal-md" role="document">
+    </div>
+</div>
+
+
+@section Scripts{
+    <script>
+        var G_$dialog = $("#ajaxDialog");
+
+        /*编辑*/
+        $(".jsEdit").click(function (e) {
+            e.preventDefault;
+            var url = $(this).data("url");
+
+            $.ajax({
+                method: "GET",
+                url: url,
+                success: function (html) {
+                    G_$dialog.find('#dialog').removeClass().addClass("modal-dialog modal-md").html(html);
+                    G_$dialog.modal('show');
+                },
+                error: function () {
+                    swal("系统异常！", "", "error");
+                }
+
+            });
+        });
+
+        /*添加积分类型*/
+        $("#addPointTypeBtn").click(function () { 
+            $.ajax({
+                method: "GET",
+                url: "@NavigationUrls.Instance().AddPointType()",
+                success: function (html) {
+                    G_$dialog.find('#dialog').removeClass().addClass("modal-dialog modal-md").html(html);
+                    G_$dialog.modal('show');
+                },
+                error: function () {
+                    swal("系统异常！", "", "error");
+                }
+
+            });
+        });
+    </script>
+}

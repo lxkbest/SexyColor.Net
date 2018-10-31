@@ -1,0 +1,88 @@
+﻿@model EditPointTypeModel
+@{
+    Layout = null;
+}
+<div id="createDialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <h4 class="modal-title" id="exampleModalLabel">添加积分类型</h4>
+        </div>
+        <div class="modal-body">
+            @Html.StatusMessage()
+            @using (Html.BeginAjaxForm("AddPointType", "SystemPoint", null, FormMethod.Post, new AjaxFormOptions { DataType = AjaxDataType.Json, OnErrorCallBack = "error", OnSuccessCallBack = "success" }, new { @id = "ajaxForm", @Class = "form-horizontal" }))
+            {
+                @Html.HiddenFor(m => m.Typekey)
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-xs-3 control-label">积分类型名称：</label>
+                    <div class="col-xs-4">
+                        @Html.TextBoxFor(m => m.Typename, new { @Class = "form-control", @Placeholder = "积分类型名称" })
+                        @Html.ValidationMessageFor(m => m.Typename)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-xs-3 control-label">限额：</label>
+                    <div class="col-xs-4">
+                        @Html.TextBoxFor(m => m.QuotaDay, new { @Class = "form-control", @Placeholder = "限额" })
+                        @Html.ValidationMessageFor(m => m.QuotaDay)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-xs-3 control-label">排序序号：</label>
+                    <div class="col-xs-4">
+                        @Html.TextBoxFor(m => m.DisplayOrder, new { @Class = "form-control", @Placeholder = "排序序号" })
+                        @Html.ValidationMessageFor(m => m.DisplayOrder)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-xs-3 control-label">描述：</label>
+                    <div class="col-xs-7">
+                        @Html.TextBoxFor(m => m.Description, new { @Class = "form-control", @Placeholder = "描述" })
+                        @Html.ValidationMessageFor(m => m.Description)
+                    </div>
+                </div>
+            }
+
+        </div>
+        <div class="modal-footer">
+            <button type="submit" form="ajaxForm" class="btn btn-primary">确 定</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
+        </div>
+    </div>
+
+</div>
+<script>
+    function success(data) {
+        var msg = data.messageContent;
+        if (data.messageType == 1) {
+            $('#ajaxDialog').modal('hide');
+            swal({
+                title: msg,
+                timer: 1500,
+                showConfirmButton: false,
+                type: 'success'
+            });
+            setTimeout(function () { location.reload(); },2000);
+           
+        } else {
+            swal({
+                title: msg,
+                timer: 1500,
+                showConfirmButton: false,
+                type: 'error'
+            });
+        }
+    }
+
+    function error(data) {
+        $('#ajaxDialog').modal('hide');
+        swal({
+            title: '系统异常！',
+            timer: 1500,
+            showConfirmButton: false,
+            type: 'error'
+        });
+    }
+
+
+</script>

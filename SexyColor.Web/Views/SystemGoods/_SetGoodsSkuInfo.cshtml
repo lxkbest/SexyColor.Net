@@ -1,0 +1,489 @@
+﻿@model IEnumerable<SetGoodsSkuInfoModel>
+@{
+    Layout = null;
+}
+<style>
+    .sku_right {
+        vertical-align: top;
+        padding-left: 6px;
+    }
+</style>
+<div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <h4 class="modal-title">商品属性设置</h4>
+        </div>
+        <div class="modal-body">
+            <form id="skuForm" asp-action="SetGoodsSkuInfo" asp-controller="SystemGoods" enctype="multipart/form-data" class="form-horizontal form_fixed">
+                <!--sku数组-->
+                <input type="hidden" name="goodsId" value="@(ViewData["Goodsid"])">
+                <input type="hidden" id="jsSKUArr" name="SkuArr" value="" />
+                <div id="jsSKUBox">
+                    @if (Model != null && Model.Count() > 0 && Model.Where(w => w.Status == (int)(GoodsSkuInfoStatus.Show)).Count() > 0)
+                    {
+                        var index = 0;
+                        foreach (var skuModel in Model)
+                        {
+                            index++;
+                            if (skuModel.Status == (int)(GoodsSkuInfoStatus.Show))
+                            {
+                                <div class="x_panel">
+                                    <div class="x_title">
+                                        <h2 class="jsIndex" data-index="@index">商品规格信息-@index</h2>
+                                        <ul class="nav navbar-right panel_toolbox">
+                                            <li>
+                                                <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                                            </li>
+                                            <li>
+                                                <a data-id="@skuModel.Skuid" class="close-link-sku jsRemoveSku"><i class="fa fa-close text-danger"></i></a>
+                                            </li>
+                                        </ul>
+                                        <div class="clearfix"></div>
+                                    </div>
+                                    <div class="x_content">
+                                        <div class="inline-block jsSKULeft">
+                                            <div class="form-group">
+                                                <div class="sku_preview_img_box">
+                                                    <input type="hidden" name="SkuImage@(index)" value="@(skuModel.SkuImage)">
+                                                    <img class="jsSKUPreviewImg" height="80" src="@(skuModel.SkuImage ?? string.Empty)" onerror="this.src='/images/img_error.png'" />
+                                                </div>
+                                            </div>
+                                            <br />
+                                            <div class="form-group">
+                                                <div class="inline-block imgUpload_box">
+                                                    <label for="imgSKUUpload" class="btn btn-sm btn-info file-upload"><i class="fa fa-image"></i> 选择图片</label>
+                                                    <input id="imgSKUUpload" class="SKUImgINput" name="skufiles" type="file" style="visibility: hidden;" mulpitle />
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="inline-block sku_right">
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <label class="control-label">是否默认</label>
+                                                    <div class="input_box jsISDefaultBox">
+                                                        <input type="hidden" class="jsISDefaultHide" name="IsDefault@(index)" value="@(skuModel.IsDefault ? "true" : "false")">
+                                                        <input type="checkbox" class="form-control jsISDefaultCheck flat" @(skuModel.IsDefault ? "checked='checked'" : string.Empty) style="display:none;">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <label class="control-label">商品规格名称</label>
+                                                    <div class="input_box">
+                                                        <input type="hidden" name="Skuid@(index)" value="@(skuModel.Skuid)">
+                                                        <input id="jsSKUName" type="text" required name="SkuName@(index)" value="@(skuModel.SkuName)" class="form-control" placeholder="">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label">商品规格进货价</label>
+                                                    <div class="input_box">
+                                                        <input id="jsSKUOriginalPrice" required number="true" min="0" type="text" name="SkuOriginalPrice@(index)" value="@(skuModel.SkuOriginalPrice)" class="form-control" placeholder="">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label">商品规格市场价</label>
+                                                    <div class="input_box">
+                                                        <input id="jsSKUMaketPrice" required number="true" min="0" type="text" name="SkuMaketPrice@(index)" value="@(skuModel.SkuMaketPrice)" class="form-control" placeholder="">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <label class="control-label">商品规格销售价</label>
+                                                    <div class="input_box">
+                                                        <input id="jsSKUFactoryPrice" number="true" min="0" required type="text" name="SkuFactoryPrice@(index)" value="@(skuModel.SkuFactoryPrice)" class="form-control" placeholder="">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label">商品规格会员价</label>
+                                                    <div class="input_box">
+                                                        <input id="jsSKUVipPrice" number="true" min="0" required type="text" name="SkuVipPrice@(index)" value="@(skuModel.SkuVipPrice)" class="form-control" placeholder="">
+                                                    </div>
+                                                </div>
+                                                <div class="form-group">
+                                                    <label class="control-label">库存</label>
+                                                    <div class="input_box">
+                                                        <input id="jsStock" required number="true" min="0" type="text" name="Stock@(index)" value="@(skuModel.Stock)" class="form-control" placeholder="">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="form-group">
+                                                    <label class="control-label">序号</label>
+                                                    <div class="input_box">
+                                                        <input required number="true" min="0" type="text" name="Number@(index)" value="@(skuModel.Number)" class="form-control" placeholder="">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    }
+                    else
+                    {
+                        <div class="x_panel">
+                            <div class="x_title">
+                                <h2 class="jsIndex" data-index="1">商品规格信息-1</h2>
+                                <ul class="nav navbar-right panel_toolbox">
+                                    <li>
+                                        <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                                    </li>
+                                    <li>
+                                        <a data-type="edit" class="close-link-sku"><i class="fa fa-close text-danger"></i></a>
+                                    </li>
+                                </ul>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="x_content">
+                                <div class="inline-block jsSKULeft">
+                                    <div class="form-group">
+                                        <div class="sku_preview_img_box">
+                                            <img class="jsSKUPreviewImg" height="80" src="" onerror="this.src='/images/img_error.png'" />
+                                        </div>
+                                    </div>
+                                    <br />
+                                    <div class="form-group">
+                                        <div class="inline-block imgUpload_box">
+                                            <label for="SKUImgUpload1" class="btn btn-sm btn-info file-upload"><i class="fa fa-image"></i> 选择图片</label>
+                                            <input id="SKUImgUpload1" class="SKUImgINput" required name="skufiles" type="file" style="visibility: hidden;" mulpitle />
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="inline-block sku_right">
+                                    <div class="row">
+                                        <div class="form-group jsISDefaultBox">
+                                            <label class="control-label">是否默认</label>
+                                            <div class="input_box">
+                                                <input type="hidden" class="jsISDefaultHide" name="IsDefault1">
+                                                <input type="checkbox" value="false" name="test" class="form-control flat jsISDefaultCheck" style="display:none;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <label class="control-label">商品规格名称</label>
+                                            <div class="input_box">
+                                                <input id="jsSKUName" type="text" required name="SkuName1" class="form-control" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label">商品规格进货价</label>
+                                            <div class="input_box">
+                                                <input id="jsSKUOriginalPrice" required number="true" min="0" type="text" name="SkuOriginalPrice1" class="form-control" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label">商品规格市场价</label>
+                                            <div class="input_box">
+                                                <input id="jsSKUMaketPrice" required number="true" min="0" type="text" name="SkuMaketPrice1" class="form-control" placeholder="">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <label class="control-label">商品规格销售价</label>
+                                            <div class="input_box">
+                                                <input id="jsSKUFactoryPrice" number="true" min="0" required type="text" name="SkuFactoryPrice1" class="form-control" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label">商品规格会员价</label>
+                                            <div class="input_box">
+                                                <input id="jsSKUVipPrice" number="true" min="0" required type="text" name="SkuVipPrice1" class="form-control" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label">库存</label>
+                                            <div class="input_box">
+                                                <input id="jsStock" required number="true" min="0" type="text" name="Stock1" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <label class="control-label">序号</label>
+                                            <div class="input_box">
+                                                <input required number="true" min="0" type="text" class="form-control" name="Number1">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                <div>
+                    <button type="button" id="jsAddGoodsSKU" class="btn btn-info btn-md"><i class="fa fa-plus"></i>&nbsp;添加商品规格</button>
+                </div>
+            </form>
+            <div class="clearfix"></div>
+        </div>
+        <div class="modal-footer">
+            <button type="submit" form="skuForm" class="btn btn-primary">确 定</button>
+            <button id="jsGoodsSkuClose" type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
+        </div>
+    </div>
+</div>
+<script src="~/lib//jquery-validation//src//localization//messages_zh.js"></script>
+<script>
+
+    console.log("商品sku条数："+@Model.Count());
+
+    /**********************商品规格***********************/
+    var $skuBox = $("#jsSKUBox");
+
+        var SKU_COUNT = @Model.Count(),
+            $skuNextBtn = $("#jsSKUNext"),
+            $skuArrInput = $("#jsSKUArr");
+        //添加商品SKU
+        $("#jsAddGoodsSKU").click(function () {
+                            SKU_COUNT++;
+                            var strVar = "";
+                            strVar += "<div class=\"clearfix\"></div> <div class=\"x_panel\">";
+                            strVar += "  <div class=\"x_title\">\n";
+                            strVar += "                                            <h2 class=\"jsIndex\" data-index=\"" + SKU_COUNT + "\">商品规格信息-" + SKU_COUNT + "<\/h2>\n";
+                            strVar += "                                            <ul class=\"nav navbar-right panel_toolbox\">\n";
+                            strVar += "                                                <li>\n";
+                            strVar += "                                                    <a class=\"collapse-link\"><i class=\"fa fa-chevron-up\"><\/i><\/a>\n";
+                            strVar += "                                                <\/li>\n";
+                            strVar += "                                                <li>\n";
+                            strVar += "                                                    <a class=\"close-link-sku\"><i class=\"fa fa-close text-danger\"><\/i><\/a>\n";
+                            strVar += "                                                <\/li>\n";
+                            strVar += "                                            <\/ul>\n";
+                            strVar += "                                            <div class=\"clearfix\"><\/div>\n";
+                            strVar += "                                        <\/div>\n";
+                            strVar += "                                        <div class=\"x_content\">\n";
+                            strVar += "                                            <div class=\"inline-block jsSKULeft \">\n";
+                            strVar += "                                                <div class=\"form-group\">\n";
+                            strVar += "                                                    \n";
+                            strVar += "                                                    <div class=\"sku_preview_img_box\">\n";
+                            strVar += "                                                        <img class=\"jsSKUPreviewImg\" height=\"80\" src=\"\" onerror=\"this.src='/images/img_error.png'\" />\n";
+                            strVar += "                                                    <\/div>\n";
+                            strVar += "                                                <\/div>\n";
+                            strVar += "                                                <br />\n";
+                            strVar += "                                                <div class=\"form-group\">\n";
+                            strVar += "                                                    <div class=\"inline-block imgUpload_box\">\n";
+                            strVar += "                                                        <label for=\"SKUImgUpload" + SKU_COUNT + "\" class=\"btn btn-sm btn-info file-upload\"><i class=\"fa fa-image\"><\/i> 选择图片<\/label>\n";
+                            strVar += "                                                        <input id=\"SKUImgUpload" + SKU_COUNT + "\" required class=\"SKUImgINput\" name=\"skufiles\" type=\"file\" style=\"visibility:hidden;\" mulpitle />\n";
+                            strVar += "                                                    <\/div>\n";
+                            strVar += "                                                <\/div>\n";
+                            strVar += "                                            <\/div>\n";
+                            strVar += "                                            <div class=\"inline-block sku_right\">\n";
+                            //是否默认
+                            strVar += "<div class=\"row\">\n";
+                            strVar += "	<div class=\"form-group\">\n";
+                            strVar += "		<label class=\"control-label\">是否默认<\/label>\n";
+                            strVar += "		<div class=\"input_box jsISDefaultBox \">\n";
+                            strVar += "         <input type=\"hidden\" class=\"jsISDefaultHide\" name=\"IsDefault" + SKU_COUNT + "\">";
+                            strVar += "			<input type=\"checkbox\" class=\"form-control flat jsISDefaultCheck \" style=\"display:none;\">\n";
+                            strVar += "		<\/div>\n";
+                            strVar += "	<\/div>\n";
+                            strVar += "<\/div>\n";
+                            //end 是否默认
+                            strVar += "                                                <div class=\"row\">\n";
+                            strVar += "                                                    <input type=\"hidden\" name=\"name\" id=\"jsSKUId\" value=\"\" />\n";
+                            strVar += "                                                    <div class=\"form-group\">\n";
+                            strVar += "                                                        <label class=\"control-label\">商品规格名称<\/label>\n";
+                            strVar += "                                                        <div class=\"input_box\">\n";
+                            strVar += "                                                            <input type=\"text\" required name=\"SkuName" + SKU_COUNT + "\" class=\"form-control\" placeholder=\"\">\n";
+                            strVar += "                                                        <\/div>\n";
+                            strVar += "                                                    <\/div>\n";
+                            strVar += "                                                    <div class=\"form-group\">\n";
+                            strVar += "                                                        <label class=\"control-label\">商品规格进货价<\/label>\n";
+                            strVar += "                                                        <div class=\"input_box\">\n";
+                            strVar += "                                                            <input type=\"text\" required name=\"SkuOriginalPrice" + SKU_COUNT + "\" class=\"form-control\" placeholder=\"\">\n";
+                            strVar += "                                                        <\/div>\n";
+                            strVar += "                                                    <\/div>\n";
+                            strVar += "                                                    <div class=\"form-group\">\n";
+                            strVar += "                                                        <label class=\"control-label\">商品规格市场价<\/label>\n";
+                            strVar += "                                                        <div class=\"input_box\">\n";
+                            strVar += "                                                            <input type=\"text\" required name=\"SkuMaketPrice" + SKU_COUNT + "\" class=\"form-control\" placeholder=\"\">\n";
+                            strVar += "                                                        <\/div>\n";
+                            strVar += "                                                    <\/div>\n";
+                            strVar += "                                                <\/div>\n";
+                            strVar += "                                                <div class=\"row\">\n";
+                            strVar += "                                                    <div class=\"form-group\">\n";
+                            strVar += "                                                        <label class=\"control-label\">商品规格销售价<\/label>\n";
+                            strVar += "                                                        <div class=\"input_box\">\n";
+                            strVar += "                                                            <input type=\"text\" required name=\"SkuFactoryPrice" + SKU_COUNT + "\" class=\"form-control\" placeholder=\"\">\n";
+                            strVar += "                                                        <\/div>\n";
+                            strVar += "                                                    <\/div>\n";
+                            strVar += "                                                    <div class=\"form-group\">\n";
+                            strVar += "                                                        <label class=\"control-label\">商品规格会员价<\/label>\n";
+                            strVar += "                                                        <div class=\"input_box\">\n";
+                            strVar += "                                                            <input type=\"text\" required name=\"SkuVipPrice" + SKU_COUNT + "\" class=\"form-control\" placeholder=\"\">\n";
+                            strVar += "                                                        <\/div>\n";
+                            strVar += "                                                    <\/div>\n";
+                            strVar += "                                                    <div class=\"form-group\">\n";
+                            strVar += "                                                        <label class=\"control-label\">库存<\/label>\n";
+                            strVar += "                                                        <div class=\"input_box\">\n";
+                            strVar += "                                                            <input type=\"text\" required name=\"Stock" + SKU_COUNT + "\" class=\"form-control\" placeholder=\"\">\n";
+                            strVar += "                                                        <\/div>\n";
+                            strVar += "                                                    <\/div>\n";
+                            strVar += "                                                <\/div>\n";
+                            //序号
+                            strVar += "<div class=\"row\">\n";
+                            strVar += "	<div class=\"form-group\">\n";
+                            strVar += "		<label class=\"control-label\">序号<\/label>\n";
+                            strVar += "		<div class=\"input_box\">\n";
+                            strVar += "			<input required number=\"true\" min=\"0\" type=\"text\" class=\"form-control\" name=\"Number" + SKU_COUNT+"\" >\n";
+                            strVar += "		<\/div>\n";
+                            strVar += "	<\/div>\n";
+                            strVar += "<\/div>\n";
+                            //end 序号
+                            strVar += "                                            <\/div>\n";
+                            strVar += "                                        <\/div><\/div>\n";
+            $skuBox.append(strVar);
+                            initIcheck();
+                        });
+        
+        //移除单个sku (这里和发布商品有点区别)
+        $skuBox.on("click", ".close-link-sku", function () {
+            debugger
+            var skuid = $(this).data("id"),
+                flag = false,
+                _this = this;
+
+            var $panel = $(_this).closest('.x_panel');
+            var $currentIsDefault = $panel.find(".jsISDefaultCheck");
+
+            var checkSkuId = 0;
+            if ($currentIsDefault.get(0).checked === true) {
+                checkSkuId = $skuBox.find(".close-link-sku").data("id");
+            }
+            if ($(this).hasClass("jsRemoveSku") && $skuBox.find(".jsRemoveSku").length > 1) {
+                swal({
+                    title: "您确定要删除该条SKU吗?",
+                    text: "",
+                    type: "warning",
+                    showCancelButton: true,
+                    closeOnConfirm: false
+                }, function () {
+                    debugger
+                    //确定后回调函数
+                    $.ajax({
+                        url: "@NavigationUrls.Instance().ModifySkuStatus()",
+                        method: "POST",
+                        data: {
+                            skuId: skuid,
+                            checkSkuId: checkSkuId
+                        },
+                        async: false,
+                        success: function (data) {
+                            debugger
+                            //如果有选中的删除的isdefault值，就勾选第一个为默认
+                            if (checkSkuId !== 0) {
+                                $(".jsISDefaultCheck").eq(0).iCheck('check');
+                            }
+                           
+                            //删除重置index
+                            $panel.remove();
+                            SKU_COUNT--;
+                            //这里的index和.jsIndex一个只用于显示标题一个用于提交
+                            var $indexs = $skuBox.find(".jsIndex");
+                            $indexs.each(function (index, element) {
+                                $(this).text("商品规格信息-" + (index + 1));
+                            });
+
+                            //关闭
+                            swal.close();
+                          
+                        },
+                        error: function () {
+                            flag = false;
+                        }
+                    });
+                });
+            } else {
+                if (!$(this).hasClass("jsRemoveSku") && $skuBox.find(".close-link-sku").length>1) {
+                    flag = true;
+                } else {
+                    flag = false;
+                }
+            }
+            if (flag) {
+                //删除重置index
+                $(this).closest('.x_panel').remove();
+                SKU_COUNT--;
+                //这里的index和.jsIndex一个只用于显示标题一个用于提交
+                var $indexs = $skuBox.find(".jsIndex");
+                $indexs.each(function (index, element) {
+                    $(this).text("商品规格信息-" + (index + 1));
+                });
+            }
+        });
+
+
+        //sku预览图片
+        $skuBox.on("change", ".SKUImgINput", function () {
+            var img = $(this).parents(".jsSKULeft").find(".jsSKUPreviewImg")[0];
+            imagePreview(this, img);
+        });
+
+         //获取所有sku的索引
+        function getAllSkuIndex() {
+                    var indexArr = [],
+                    $indexs = $skuBox.find(".jsIndex");
+    $.each($indexs, function (index, element) {
+                        var index = $(element).data("index");
+                        indexArr.push(index);
+                    });
+                    var str = indexArr.join(",");
+    $skuArrInput.val(str);
+
+                }
+
+        /*校验表单*/
+        $("#skuForm").validate({
+            submitHandler: function (form) {
+                getAllSkuIndex();
+               $(form).ajaxSubmit({
+                    success: function (data) {
+                        var msg = data.messageContent;
+                        debugger
+                        if (data.messageType!==1) {
+                            swal(msg, "", "warning");
+                        } else {
+                            swal({
+                                title: msg,
+                                timer: 1500,
+                                showConfirmButton: false,
+                                type: 'success'
+                            });
+                            setTimeout(function () { location.href="@NavigationUrls.Instance().ManageGoods(GoodsInfoStatus.Shelves)"; }, 2000);
+                        }
+                    },
+                    error: function () {
+                        swal("系统异常！","","error");
+                    }
+                });
+            }
+        });
+
+    /*初始化icheck*/
+    function initIcheck() {
+        $('input.flat').iCheck({
+            checkboxClass: 'icheckbox_flat-green',
+            radioClass: 'iradio_flat-green'
+        });
+     }
+    initIcheck();
+
+    /*只能有一个默认被勾中*/
+    $skuBox.on("ifClicked", ".jsISDefaultCheck", function () {
+        $(".jsISDefaultCheck").iCheck('uncheck');
+        $(".jsISDefaultHide").val("");
+        var $ichecks = $(this).iCheck('check').parents(".jsISDefaultBox").find(".jsISDefaultHide");
+        $ichecks.val(this.checked);
+    });
+
+    /*点击modal关闭按钮时刷新商品信息*/
+    $("#jsGoodsSkuClose").click(function () {
+        window.location.reload();
+    });
+
+
+</script>

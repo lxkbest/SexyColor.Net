@@ -1,0 +1,61 @@
+﻿@model OperationLogs
+@{
+    Layout = null;
+}
+
+<div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <h4 class="modal-title">查看详细日志</h4>
+        </div>
+        <div class="modal-body">
+            <div class="form-horizontal form_fixed">
+                <div class="row">
+                    <div class="form-group">
+                        <label class="control-label">操作对象名称：</label>
+                        <div class="input_box">
+                            @Html.TextBoxFor(m => m.OperationObjectName, new { @Class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">访问Url：</label>
+                        <div class="input_box">
+                            @Html.TextBoxFor(w => w.OperatorUrl, new { @class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">Ip地址：</label>
+                        <div class="input_box">
+                            @Html.TextBoxFor(m => m.OperatorIp, new { @Class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label class="control-label">操作者名称：</label>
+                        <div class="input_box">
+                            @Html.TextBoxFor(m => m.OperatorUsername, new { @Class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">操作者编号：</label>
+                        <div class="input_box">
+                            @Html.TextBoxFor(m => m.OperatorUserid, new { @Class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">创建时间：</label>
+                        <div class="input_box">
+                            @Html.TextBoxFor(m => m.DateCreated, "{0:yyyy-MM-dd HH:mm:ss}", new { @Class = "form-control" })
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
+        </div>
+    </div>
+</div>

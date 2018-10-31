@@ -1,0 +1,34 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ output extension=".cs" #>
+
+using MySqlSugar;
+using System;
+using SexyColor.Infrastructure;
+
+
+
+namespace <#=config.nameSpace#>
+{    
+
+	[SugarMapping(TableName = "<#=config.TableName#>")]
+	[Serializable]
+
+    public class <#=config.ClassName#>
+    {
+		
+    }
+}
+
+ 
+
+<#+
+    public class config
+    {
+        public static readonly string ConnectionString="server=localhost;Database=sexycolor;Uid=root;Pwd=123456";
+        public static readonly string DbDatabase="sexycolor";
+        public static readonly string TableName="sc_user";
+		public static readonly string ClassName="User";
+        public static readonly string nameSpace="SexyColor.BusinessComponents";
+    }
+#>
+

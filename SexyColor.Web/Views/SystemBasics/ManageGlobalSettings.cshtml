@@ -1,0 +1,122 @@
+﻿@model EditGlobalSettingsModel
+@{
+    Layout = "~/Views/Shared/_SystemLayout.cshtml";
+}
+<style>
+    .globalSettingsForm {
+        display: table;
+        width: 30%;
+    }
+</style>
+<div class="">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <ol class="breadcrumb">
+                        <li><a href="#">系统后台</a></li>
+                        <li><a href="#">基础模块</a></li>
+                        <li class="active">全局设置</li>
+                    </ol>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <div class="table-responsive">                          
+                        @using (Html.BeginAjaxForm("EditGlobalSettings", "SystemBasics", null, FormMethod.Post, new AjaxFormOptions { DataType = AjaxDataType.Json, OnErrorCallBack = "fnError", OnSuccessCallBack = "fnSuccess", BeforeSubmitCallBack = "fnBeforeSubmit" }, new { @id = "globalSettingsForm", @Class = "form-horizontal globalSettingsForm" }))
+                        {
+                            <div class="form-group">
+                                <label class="col-xs-5 control-label">@Html.DisplayNameFor(m => m.GlobalFreeMoneySetting)</label>
+                                <div class="col-xs-7">
+                                    @Html.TextBoxFor(m => m.GlobalFreeMoneySetting, new { @class = "form-control", @readonly = "readonly" })
+                                    @Html.ValidationMessageFor(m => m.GlobalFreeMoneySetting)
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-xs-5 control-label">@Html.DisplayNameFor(m => m.GlobalFreightSetting)</label>
+                                <div id="datetimepicker1" class="col-xs-7">
+                                    @Html.TextBoxFor(m => m.GlobalFreightSetting, new {@class = "form-control", @readonly = "readonly" })
+                                    @Html.ValidationMessageFor(m => m.GlobalFreightSetting)
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-xs-5 control-label">@Html.DisplayNameFor(m => m.GlobalOrderSetting)</label>
+                                <div class="col-xs-7">
+                                    @Html.TextBoxFor(m => m.GlobalOrderSetting, new {@class = "form-control", @readonly = "readonly" })
+                                    @Html.ValidationMessageFor(m => m.GlobalOrderSetting)
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="col-xs-5 control-label">@Html.DisplayNameFor(m => m.GlobalReturnGoodsSetting)</label>
+                                <div class="col-xs-7">
+                                    @Html.TextBoxFor(m => m.GlobalReturnGoodsSetting, new { @class = "form-control", @readonly = "readonly" })
+                                    @Html.ValidationMessageFor(m => m.GlobalReturnGoodsSetting)
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="col-xs-offset-4 col-xs-10">
+                                    <button type="button" id="jsEditBtn" class="btn btn-sm btn-success">编辑</button>
+                                    <button type="button" id="jsCancelBtn" class="hide btn btn-sm btn-default">取消</button>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts{
+    <script>
+        var G_$editForm = $("#globalSettingsForm"),
+            G_$subnitBtn = $("#jsEditBtn"),
+            G_$cancelBtn = $("#jsCancelBtn"),
+            G_input;
+        /*提交成功 2017-5-25 伍冠源*/
+        function fnSuccess(data) {
+            var msg = data.messageContent;
+            if (data.messageType === 1) {
+                swal(msg, "", "success");
+            } else {
+                swal(msg, "", "warning");
+            }
+
+        }
+
+        function fnError() {
+            swal("系统异常", "", "error");
+        }
+
+        function fnBeforeSubmit(arr, $form, options) { }
+
+        G_$subnitBtn.click(function () {
+            if (G_$subnitBtn.hasClass("submit")) {
+                //保存
+                G_$editForm.trigger("submit");
+                if (G_$editForm.find(".field-validation-error").length <= 0) {
+                    G_$subnitBtn.text("编辑").removeClass("submit");
+                    G_$cancelBtn.addClass("hide");
+                    G_input = G_input || G_$editForm.find("input,textarea");
+                    G_input.attr("readonly", true);
+                }
+
+            } else {
+                //编辑
+                G_$subnitBtn.text("保存").addClass("submit");
+                G_$cancelBtn.removeClass("hide");
+                G_input = G_input || G_$editForm.find("input,textarea");
+                G_input.removeAttr("readonly").filter("[name=Subject]").focus();
+            }
+        });
+
+        /*取消按钮*/
+        G_$cancelBtn.click(function () {
+            location.reload();
+        }
+        );
+
+    </script>
+}

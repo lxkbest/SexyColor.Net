@@ -1,0 +1,176 @@
+﻿@model GoodsInfo
+@{
+    Layout = null;
+    var currentUrl = RequestHelper.RawUrl(HttpContextCore.Current.Request);
+}
+
+<div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <h4 class="modal-title">商品评论</h4>
+        </div>
+        <div class="modal-body">
+
+            <div class="table-responsive">
+                @using (Html.BeginForm("PointLogs", " SystemPoint", FormMethod.Get, new { @Class = "form-horizontal form_fixed" }))
+                {
+                    @Html.Hidden("returnUrl", currentUrl)
+                    <div class="row">
+                        <div class="form-group">
+                            <label class="control-label">用户名</label>
+                            <div class="input_box">
+                                <input type="text" name="UserName" value="" class="form-control" placeholder="用户名">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label">积分项目名称</label>
+                            <div class="input_box">
+                                <input type="text" name="ItemsName" value="" class="form-control" placeholder="积分项目名称">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label">积分值</label>
+                            <div class="input_box">
+                                <input type="text" name="SexyPoints" value="@ViewData["SexyPoints"]" class="form-control" placeholder="积分值">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="form-group">
+                            <label class="control-label">经验值</label>
+                            <div class="input_box">
+                                <input type="text" name="ExperiencePoints" value="@ViewData["ExperiencePoints"]" class="form-control" placeholder="经验值">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label">收入/支出</label>
+                            <div class="input_box">
+                                @Html.DropDownList("IsIncome", @ViewData["IsIncome"] as IEnumerable<SelectListItem>, "全部", new { @Class = "form-control" })
+                            </div>
+                        </div>
+
+                    </div>
+
+                            <div class="row">
+                                <div class="form-group">
+                                    <label class="control-label"></label>
+                                    <div class="input_box">
+                                        <button id="jsEmpty" type="button" class="btn btn-default _submit">
+                                            <i class="fa fa-refresh"></i>
+                                            重 置
+                                        </button>
+                                        <button type="submit" class="btn btn-success _submit">
+                                            <i class="fa fa-search"></i>
+                                            搜 索
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="clearfix"></div>
+                }
+                <div class="x_content text-right">
+
+                </div>
+
+                @using (Html.BeginForm("", "", FormMethod.Get, new { id = "userRolesForm", @Class = "table_form" }))
+                {
+
+                    @Html.Hidden("returnUrl", currentUrl)
+                    @if (Model.TotalRecords > 0)
+                    {
+                        <table class="table table-striped jambo_table bulk_action">
+                            <thead>
+                                <tr class="headings">
+                                    <th><input type="checkbox" class="allCheck flat"></th>
+                                    <th class="column-title">用户名</th>
+                                    <th class="column-title">积分项目名称</th>
+                                    <th class="column-title">积分值</th>
+                                    <th class="column-title">经验值</th>
+                                    <th class="column-title">收入/支出</th>
+                                    <th class="column-title">描述</th>
+                                    <th class="column-title">获取时间</th>
+                                    <th class="column-title">有效时间</th>
+                                    @*<th class="column-title no-link last"> <span class="nobr">操作</span></th>*@
+                                </tr>
+                            </thead>
+                            @if (Model != null && Model.TotalRecords > 0)
+                            {
+                                foreach (PointLogs pointLogs in Model)
+                                {
+                                    IUserService userService = DIContainer.Resolve<IUserService>();
+                                    User user = userService.GetFullUser(pointLogs.Userid);
+                                    <tr class="pointer">
+                                        <td>
+                                            <label>
+                                                @Html.CustomCheckBox("customCheck", pointLogs.Id, false, new { @class = "flat" })
+                                            </label>
+                                        </td>
+
+                                        <!--用户名-->
+                                        <td class="td_user">
+                                            @(user.UserName)
+                                        </td>
+                                        <!--积分项目名称-->
+                                        <td>@(pointLogs.Itemsname)</td>
+                                        <!--积分值-->
+                                        <td>@(pointLogs.SexyPoints)</td>
+                                        <!--经验值-->
+                                        <td>@(pointLogs.ExperiencePoints)</td>
+                                        <!--是否收入-->
+                                        <td>@(pointLogs.IsIncome ? "收入" : "支出")</td>
+                                        <!--描述-->
+                                        <td>@(pointLogs.Description)</td>
+                                        <!--获取时间-->
+                                        <td>@(pointLogs.DateCreated)</td>
+                                        <!--有效时间-->
+                                        <td>@(pointLogs.DateOverdue)</td>
+
+                                        @*<td class="last">
+                                                <div class="dropdown">
+                                                    <button id="dLabel" class="btn btn-info btn-xs" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                        选项
+                                                        <span class="caret"></span>
+                                                    </button>
+                                                    <ul class="dropdown-menu" aria-labelledby="dLabel">
+                                                        <li>
+                                                            <a class="jsEdit" href="###" data-backdrop="static" data-url="@NavigationUrls.Instance().EditUserRanks('5')">
+                                                                编辑
+                                                            </a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </td>*@
+                                    </tr>
+
+                                }
+                            }
+                        </table>
+                        <div>
+                            @Html.PagingResults(Model)
+                            @Html.PagingButton(Model)
+                            <div class="clearfix"></div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="text-center">
+                            搜索不到数据
+                        </div>
+                    }
+                }
+            </div>
+
+
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
+        </div>
+    </div>
+</div>

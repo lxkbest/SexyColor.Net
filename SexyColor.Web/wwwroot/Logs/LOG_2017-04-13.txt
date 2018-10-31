@@ -1,0 +1,44 @@
+----------------------------------------------------------------
+时间：2017/4/13 14:35:04
+详细信息:
+Value cannot be null.
+Parameter name: key
+System.ArgumentNullException: Value cannot be null.
+Parameter name: key
+   at System.Collections.Concurrent.ConcurrentDictionary`2.ThrowKeyNullException()
+   at System.Collections.Concurrent.ConcurrentDictionary`2.ContainsKey(TKey key)
+   at SexyColor.CommonComponents.UserIdToUserNameDictionary.GetUserId(String userName) in D:\SexyColor.Net\SexyColor.CommonComponents\Users\UserIdToUserNameDictionary.cs:line 60
+   at SexyColor.CommonComponents.BaseController.OnActionExecuting(ActionExecutingContext context) in D:\SexyColor.Net\SexyColor.CommonComponents\Mvc\Controllers\BaseController.cs:line 16
+   at Microsoft.AspNetCore.Mvc.Controller.<OnActionExecutionAsync>d__27.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionFilter.<OnActionExecutionAsync>d__4.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.<InvokeNextExceptionFilterAsync>d__24.MoveNext()
+----------------------------------------------------------------
+
+----------------------------------------------------------------
+时间：2017/4/13 14:39:06
+详细信息:
+Value cannot be null.
+Parameter name: key
+System.ArgumentNullException: Value cannot be null.
+Parameter name: key
+   at System.Collections.Concurrent.ConcurrentDictionary`2.ThrowKeyNullException()
+   at System.Collections.Concurrent.ConcurrentDictionary`2.ContainsKey(TKey key)
+   at SexyColor.CommonComponents.UserIdToUserNameDictionary.GetUserId(String userName) in D:\SexyColor.Net\SexyColor.CommonComponents\Users\UserIdToUserNameDictionary.cs:line 60
+   at SexyColor.CommonComponents.BaseController.OnActionExecuting(ActionExecutingContext context) in D:\SexyColor.Net\SexyColor.CommonComponents\Mvc\Controllers\BaseController.cs:line 17
+   at Microsoft.AspNetCore.Mvc.Controller.<OnActionExecutionAsync>d__27.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionFilter.<OnActionExecutionAsync>d__4.MoveNext()
+--- End of stack trace from previous location where exception was thrown ---
+   at System.Runtime.ExceptionServices.ExceptionDispatchInfo.Throw()
+   at System.Runtime.CompilerServices.TaskAwaiter.HandleNonSuccessAndDebuggerNotification(Task task)
+   at Microsoft.AspNetCore.Mvc.Internal.ControllerActionInvoker.<InvokeNextExceptionFilterAsync>d__24.MoveNext()
+----------------------------------------------------------------
+

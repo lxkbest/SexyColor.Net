@@ -1,0 +1,284 @@
+﻿@model EditUserModel
+@{
+    Layout = null;
+
+    Dictionary<int, string> activatedValues = new Dictionary<int, string> { { 1, "普通用户" }, { 2, "管理用户" } };
+    var userTypeSelectList = new SelectList(activatedValues.Select(w => new { text = w.Value, value = w.Key.ToString().ToLower() }), "value", "text",Model.UserType);
+
+}
+<div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <h4 class="modal-title">编辑用户</h4>
+        </div>
+        <div class="modal-body">
+            @using (Html.BeginAjaxForm("EditUser", "SystemUser", null, FormMethod.Post, new AjaxFormOptions { DataType = AjaxDataType.Json, OnErrorCallBack = "error", OnSuccessCallBack = "success", BeforeSubmitCallBack = "beforeSubmit" }, new { @Class = "form-horizontal form_fixed" }))
+            {
+                @Html.HiddenFor(m => m.UserId)
+                <div class="row">
+                    <div class="form-group">
+                        <label class="control-label">用户名：</label>
+                        <div class="input_box">
+                            <input type="text" name="name" value="@Model.UserName" readonly="readonly" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">密码问题：</label>
+                        <div class="input_box">
+                            @Html.TextBoxFor(m => m.PasswordQuestion, new { @Class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.PasswordQuestion)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">密码答案：</label>
+                        <div class="input_box">
+                            @Html.TextBoxFor(m => m.PasswordAnswer, new { @Class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.PasswordAnswer)
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label class="control-label">账号邮箱：</label>
+                        <div class="input_box">
+                            <input type="text" name="name" value="@Model.AccountEmail" readonly="readonly" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">手机号码：</label>
+                        <div class="input_box">
+                            <input type="text" name="name" value="@Model.AccountMobile" readonly="readonly" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">昵称：</label>
+                        <div class="input_box">
+                            <input type="text" name="name" value="@Model.NickName" readonly="readonly" class="form-control" />
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row">
+                   
+                    <div class="form-group">
+                        <label class="control-label">创建时间：</label>
+                        <div class="input_box">
+                            <input type="text" name="name" value="@Model.DateCreated.ToDateString(true)" readonly="readonly" class="form-control" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">创建用户时的IP：</label>
+                        <div class="input_box">
+                            <input type="text" name="name" value="@Model.IpCreated" readonly="readonly" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">用户类别：</label>
+                        <div class="input_box">
+                            <div class="width_170">
+                                @Html.DropDownList("UserType", userTypeSelectList as IEnumerable<SelectListItem>, new { @class = "form-control" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label class="control-label">上次活动时间：</label>
+                        <div class="input_box">
+                            <input type="text" name="name" value="@Model.LastActivityTime.ToDateString(true)" readonly="readonly" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">上次操作：</label>
+                        <div class="input_box">
+                            <input type="text" name="name" value="@Model.LastAction" readonly="readonly" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">上次活动时的IP：</label>
+                        <div class="input_box">
+                            <div class="width_170">
+                                <input type="text" name="name" value="@Model.IpLastActivity" readonly="readonly" class="form-control" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label class="control-label">封禁截止日期：</label>
+                        <div class="input_box">
+                            <input type="text" name="name" value="@Model.BanDeadLine.ToDateString(true)" readonly="readonly" class="form-control" />
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">粉丝数：</label>
+                        <div class="input_box">
+                            @Html.TextBoxFor(m => m.FollowerCount, new { @Class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.FollowerCount)
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">关注用户数：</label>
+                        <div class="input_box">
+                            <div class="width_170">
+                                @Html.TextBoxFor(m => m.FollowedCount, new { @Class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.FollowedCount)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group">
+                        <label class="control-label">用户等级：</label>
+                        <div class="input_box">
+                            <div class="width_170">
+                                @Html.TextBoxFor(m => m.Rank, new { @Class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.Rank)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">积分值：</label>
+                        <div class="input_box">
+                            <div class="width_170">
+                                @Html.TextBoxFor(m => m.SexyPoints, new { @Class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.SexyPoints)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">冻结的积分值：</label>
+                        <div class="input_box">
+                            @Html.TextBoxFor(m => m.FrozenSexyPoints, new { @Class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.FrozenSexyPoints)
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label class="control-label">帐号邮箱是否通过验证：</label>
+                        <div class="input_box">
+                            <div class="width_170">
+                                @Html.CheckBoxFor(m => m.IsEmailVerified, new { @Class = "flat" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">帐号手机是否通过验证：</label>
+                        <div class="input_box">
+                            <div class="width_170">
+                                @Html.CheckBoxFor(m => m.IsMobileVerified, new { @Class = "flat" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">是否强制用户登录：</label>
+                        <div class="input_box">
+                            <div class="width_170">
+                                @Html.CheckBoxFor(m => m.ForceLogin, new { @Class = "flat", @readonly = "readonly" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label class="control-label">强制用户管制：</label>
+                        <div class="input_box">
+                            <div class="width_170">
+                                @Html.CheckBoxFor(m => m.IsForceModerated, new { @Class = "flat" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">是否通过认证：</label>
+                        <div class="input_box">
+                            <div class="width_170">
+                                @Html.CheckBoxFor(m => m.IsAuthentication, new { @Class = "flat" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="clearfix"></div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">确 定</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
+                </div>
+            }
+        </div>
+
+
+    </div>
+</div>
+
+<script>
+    function beforeSubmit(arr, $form, options) {
+        //加载中
+        var $btn = $form.find('[type="submit"]').button('加载中')
+    }
+    function success(data) {
+        if (data.messageType == 1) {
+            $('#ajaxDialog').modal('hide');
+            swal({
+                title: '操作成功！',
+                timer: 1500,
+                showConfirmButton: false,
+                type: 'success'
+            });
+            setTimeout(function () {
+                location.reload();
+            }, 1500);
+        } else {
+            swal({
+                title: data.messageContent,
+                timer: 1500,
+                showConfirmButton: false,
+                type: 'error'
+            });
+        }
+    }
+
+    function error(data) {
+        $('#ajaxDialog').modal('hide');
+        swal({
+            title: '操作失败！',
+            timer: 1500,
+            showConfirmButton: false,
+            type: 'error'
+        });
+    }
+    /*初始化icheck*/
+    $('input.flat').iCheck({
+        checkboxClass: 'icheckbox_flat-green',
+        radioClass: 'iradio_flat-green'
+    });
+
+    $(function () {
+        jQuery.validator.addMethod('IsPositiveIntegerType',
+            function (value, element, params) {
+                if (/^[0-9]+$/.test(value)) {
+                    return true;
+                }
+                return false;
+            });
+
+        jQuery.validator.unobtrusive.adapters.add('IsPositiveIntegerType',
+            ['element'],
+            function (options) {
+                var element = $(options.form).find('#FollowerCount')[0];
+                options.rules['IsPositiveIntegerType'] = [element];
+                options.messages['IsPositiveIntegerType'] = options.message;
+            });
+    }(jQuery));
+</script>

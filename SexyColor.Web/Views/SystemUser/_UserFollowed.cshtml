@@ -1,0 +1,77 @@
+﻿@model PagingDataSet<User>
+@{
+    Layout = null;
+}
+<style>
+
+</style>
+
+<div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <h4 class="modal-title">粉丝</h4>
+        </div>
+        <div class="jsFansTable modal-body table_form">
+
+            @if (Model.TotalRecords > 0)
+            {
+                <table class="table table-striped jambo_table bulk_action">
+                    <thead>
+                        <tr class="headings">
+                            <th class="column-title">头像</th>
+                            <th class="column-title">用户名</th>
+                            <th class="column-title">用户昵称</th>
+                            <th class="column-title">Email</th>
+                            <th class="column-title">手机号码</th>
+                            <th class="column-title">等级</th>
+                            <th class="column-title">注册日期</th>
+                        </tr>
+                    </thead>
+                    @if (Model != null && Model.TotalRecords > 0)
+                    {
+                        RolesService roleService = DIContainer.Resolve<RolesService>();
+                        foreach (User user in Model)
+                        {
+
+                            <tr></tr>
+                            <tr class="pointer">
+                                <td class="td_user">
+                                    <img title="@(user.UserName)" src="@user.HeadImg" width="50" height="50" />
+                                </td>
+                                <td>
+                                    @(user.UserName.AsTrim(10))
+                                </td>
+                                <td>@(user.NickName)</td>
+                                <td>@(user.AccountEmail)</td>
+                                <td>@(user.AccountMobile)</td>
+                                <td class="a-right a-right ">@(user.Rank)</td>
+                                <td>@(user.DateCreated.ToDateString())</td>
+                            </tr>
+
+                        }
+                    }
+                </table>
+                <div>
+                    @Html.PagingResults(Model)
+                    @Html.PagingButton(Model)
+                    <div class="clearfix"></div>
+                </div>
+            }
+            else
+            {
+                <div class="text-center">
+                    搜索不到数据
+                </div>
+            }
+
+
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
+        </div>
+
+    </div>
+</div>
+

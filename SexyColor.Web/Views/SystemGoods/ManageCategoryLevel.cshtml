@@ -1,0 +1,142 @@
+﻿@model IEnumerable<GoodsCategoryLevel1>
+@{
+    Layout = "~/Views/Shared/_SystemLayout.cshtml";
+}
+@section Styles{
+    <link rel="stylesheet" href="/vendors/ztree/metroStyle/metroStyle.css" />
+}
+
+<div class="jsLevelAllCheckBox perssiom_checkbox">
+    <div class="row">
+        <div class="col-md-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_content">
+                    <ol class="breadcrumb">
+                        <li><a href="#">系统后台</a></li>
+                        <li><a href="#">商品模块</a></li>
+                        <li class="active">商品分类</li>
+                    </ol>
+                    <div class="clearfix"></div>
+                    <h2>
+                        <button class="btn btn-success btn-sm pull-right operationCategory" data-url="@NavigationUrls.Instance().CreateCategoryLevel()" data-type="add">添加分类</button>
+                    </h2>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        @foreach (var level1 in Model)
+        {
+            var service = DIContainer.Resolve<IGoodsCategoryLevelService>();
+            IEnumerable<GoodsCategoryLevel2> level2List = service.GetCategoryLevel2ByLevel1Id(level1.CategoryLevel1Id);
+            <div class="col-md-12 col-xs-12">
+                <div class="jsLevel1CheckAllBox x_panel">
+                    <div class="x_title">
+                        <h2>
+                            @level1.CategoryName
+                            &nbsp;
+                            <div class="dropdown">
+                                <button id="dLabel" class="btn btn-info btn-xs" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    选项
+                                    <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="dLabel">
+                                    <li>
+                                        <a href="###" class="btn-link operationCategory" data-url="@NavigationUrls.Instance().DetailsCategoryLevel(level1.CategoryLevel1Id, CategoryLevel.Level1)"><small class="text-success">详情</small></a>
+                                    </li>
+                                    <li>
+                                        <a href="###" class="btn-link operationCategory" data-url="@NavigationUrls.Instance().EditCategoryLevel(level1.CategoryLevel1Id, CategoryLevel.Level1)" data-type="edit" data-level="1"><small class="text-success">编辑</small></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </h2>
+                        <ul class="nav navbar-right panel_toolbox">
+                            <li>&nbsp;&nbsp;&nbsp;&nbsp;</li>
+                            <li>
+                                <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                            </li>
+                            <li>
+                                <a class="close-link"><i class="fa fa-close"></i></a>
+                            </li>
+                        </ul>
+                        <div class="clearfix">
+                        </div>
+                    </div>
+                    <div class="x_content">
+                        <div class="form-horizontal form_tick">
+                            <div class="form-group jsLevel2CheckAllBox">
+
+                                <div class="jsLevel3CheckBox col-xs-12 control-label control_label">
+                                    @foreach (var level2 in level2List)
+                                    {
+                                        <div class="checkbox_tick_box">
+                                            <label class="text_label noselect" for="" unselectable="on">@level2.CategoryName</label>
+                                            <div class="dropdown">
+                                                <button id="dLabel" class="btn btn-info btn-xs" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                    选项
+                                                    <span class="caret"></span>
+                                                </button>
+                                                <ul class="dropdown-menu" aria-labelledby="dLabel">
+                                                    <li>
+                                                        <a href="###" class="btn-link operationCategory" data-url="@NavigationUrls.Instance().DetailsCategoryLevel(level2.CategoryLevel2Id, CategoryLevel.Level2)"><small class="text-success">详情</small></a>
+                                                    </li>
+                                                    <li>
+                                                        <a href="###" class="btn-link operationCategory" data-url="@NavigationUrls.Instance().EditCategoryLevel(level2.CategoryLevel2Id, CategoryLevel.Level2)" data-type="edit"><small class="text-success">编辑</small></a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                    }
+
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+<!-- modal 弹框模板-->
+<div class="modal fade" id="ajaxDialog" tabindex="-1" role="dialog" aria-labelledby="modalLabel" data-backdrop="static">
+    <div id="dialog" class="modal-dialog modal-md" role="document">
+    </div>
+</div>
+@section Scripts{
+    <script src="/vendors/ztree/jquery.ztree.core.min.js"></script>
+    <script>
+        $(function () {
+            $(".operationCategory").click(function () {
+                var url = $(this).data("url"),
+                    type = $(this).data("type"),
+                    level = $(this).data("level");
+
+                $.get(url, function (html) {
+                    $("#dialog").removeClass().addClass("modal-dialog modal-lg").html(html);
+                    var box = $("#jsParentBox");
+
+
+                    if (type == "add") {
+                        $("#myForm").data("type", "add");
+                        $("#LevelNumber").val(@((int)CategoryLevel.Level1));
+                    }
+                    if (type == "edit") {
+                        $("#myForm").data("type", "edit");
+                        $("#levelCheck").hide();
+                        if (level == "1") {
+                            box.hide();
+                        } else {
+                            box.show();
+                        }
+                    }
+
+                    $('#ajaxDialog').modal('show');
+
+                })
+            })
+        });
+    </script>
+}
+

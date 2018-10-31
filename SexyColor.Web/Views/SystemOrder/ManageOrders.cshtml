@@ -1,0 +1,580 @@
+﻿@model PagingDataSet<OrderInfo>
+@{
+    Layout = "~/Views/Shared/_SystemLayout.cshtml";
+    int status = ViewData.Get<int>("StatusValue", 0);
+    OrderModifyStatus? statusValue = Enum.Parse(typeof(OrderModifyStatus), status.ToString()) as OrderModifyStatus?;
+}
+<style>
+    .justify_box {
+        text-align: justify;
+        line-height: 0;
+    }
+
+        .justify_box > * {
+            vertical-align: top;
+            line-height: normal;
+        }
+
+    .justify_fix {
+        display: inline-block;
+        width: 100%;
+        height: 0;
+        overflow: hidden;
+    }
+
+    .panel_goods_order {
+        position: relative;
+    }
+
+        .panel_goods_order .left, .panel_goods_order .right {
+            vertical-align: top;
+            padding-top: 0;
+        }
+
+            .panel_goods_order .left span {
+                display: inline-block;
+                padding-left: 15px;
+            }
+
+        .panel_goods_order .panel {
+            margin-bottom: 5px;
+        }
+
+        .panel_goods_order .collapse_icon {
+            width: 50px;
+            height: 22px;
+            position: absolute;
+            left: 0;
+            right: 0;
+            margin: auto;
+            bottom: -1px;
+            text-align: center;
+            font-size: 26px;
+        }
+
+        .panel_goods_order .child_panel_body {
+            border: 1px solid #d7e9c7;
+            margin-top: 6px;
+        }
+
+        .panel_goods_order .collapse_icon.top {
+            transform: rotateX(-180deg);
+        }
+
+    table.header_row {
+        border-spacing: 10px;
+        width: 100%;
+    }
+
+        table.header_row td {
+            padding-left: 34px;
+        }
+
+        table.header_row .first_td {
+            padding-left: 0;
+        }
+
+    .header_row ._label {
+        display: inline-block;
+        color: cadetblue;
+        font-weight: 600;
+    }
+    /*
+        table 操作
+    */
+
+    .table-operation__checkbox > * {
+        vertical-align: middle;
+        display: inline-block;
+    }
+    /*
+        表格搜索条件
+    */
+    .form_fixed {
+        display: initial;
+    }
+
+        .form_fixed .form-group .range_box input {
+            width: 154px;
+        }
+
+        .form_fixed .form-group .range_box .input_box_2 {
+            width: 193px;
+        }
+
+    .select-input {
+        width: 102px !important;
+        display: inline-block;
+        border: none;
+        font-weight: bold;
+        color: #73879C;
+        box-shadow: none;
+    }
+</style>
+
+
+<div class="">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <ol class="breadcrumb">
+                        <li><a href="#">系统后台</a></li>
+                        <li><a href="#">订单模块</a></li>
+                        <li class="active">订单管理</li>
+                    </ol>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <div class="table-responsive">
+                        @using (Html.BeginForm("ManageOrders", "SystemOrder", FormMethod.Get, new { @Class = "form-horizontal form_fixed" }))
+                        {
+
+                            <!--搜索-->
+                            <div class="row">
+                                <div class="form-group">
+                                    @Html.DropDownList("keyword", ViewData["Keyword"] as IEnumerable<SelectListItem>, new { @Class = "form-control select-input" })
+                                    <div class="input_box">
+                                        <input type="text" name="keyvalue" value="@ViewData["Keyvalue"]" class="form-control" placeholder="" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">订单价格</label>
+                                    <div class="input_box short_box">
+                                        <input type="text" name="realPriceLowerLimit" value="@ViewData["RealPriceLowerLimit"]" class="form-control">
+                                        <div class="_separator">
+                                            -
+                                        </div>
+                                        <input type="text" name="realPriceUpperLimit" value="@ViewData["RealPriceUpperLimit"]" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">下单时间</label>
+                                    <div class="input_box range_box">
+                                        <div class="input_box_2">
+                                            <div class="input-group date" id="datetimepicker1">
+                                                <input type="text" name="orderTimeLowerLimit" value="@ViewData["OrderTimeLowerLimit"]" class="form-control jsTimeInput" placeholder="开始时间">
+                                                <div class="input-group-addon">
+                                                    <i class="glyphicon glyphicon-calendar"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="_separator">
+                                            -
+                                        </div>
+                                        <div class="input_box_2">
+                                            <div class="input-group date" id="datetimepicker2">
+                                                <input type="text" name="orderTimeUpperLimit" value="@ViewData["OrderTimeUpperLimit"]" class="form-control jsTimeInput" placeholder="结束时间">
+                                                <div class="input-group-addon">
+                                                    <i class="glyphicon glyphicon-calendar"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <a id="js7Day" class="btn btn-xs btn-info">7天</a>
+                                        <a id="js30Day" class="btn btn-xs btn-info">30天</a>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group">
+                                    <label class="control-label">订单类型</label>
+                                    <div class="input_box">
+                                        @Html.DropDownList("type", ViewData["Type"] as IEnumerable<SelectListItem>, "全部", new { @Class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">订单状态</label>
+                                    <div class="input_box">
+                                        @Html.DropDownList("status", ViewData["Status"] as IEnumerable<SelectListItem>, "全部", new { @Class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">支付方式</label>
+                                    <div class="input_box">
+                                        @Html.DropDownList("pay", ViewData["Pay"] as IEnumerable<SelectListItem>, "全部", new { @Class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">物流方式</label>
+                                    <div class="input_box">
+                                        @Html.DropDownList("mode", ViewData["Logistics"] as IEnumerable<SelectListItem>, "全部", new { @Class = "form-control" })
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="form-group">
+                                    <label class="control-label">维权状态</label>
+                                    <div class="input_box">
+                                        @Html.DropDownList("rights", ViewData["Rights"] as IEnumerable<SelectListItem>, "全部", new { @Class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">是否使用优惠券</label>
+                                    <div class="input_box">
+                                        @Html.DropDownList("isUse", ViewData["IsUse"] as IEnumerable<SelectListItem>, "全部", new { @Class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">是否评价</label>
+                                    <div class="input_box">
+                                        @Html.DropDownList("isCompleteComment", ViewData["IsCompleteComment"] as IEnumerable<SelectListItem>, "全部", new { @Class = "form-control" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label"></label>
+                                    <div class="input_box">
+                                        <button type="submit" class="btn btn-success _submit">
+                                            <i class="fa fa-search"></i>
+                                            搜 索
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="clearfix"></div>
+                        }
+                        <!--tab切换-->
+                        <ul class="nav nav-tabs">
+                            @if (status == 0)
+                            {
+                                <li role="presentation" class="active"><a href="@NavigationUrls.Instance().ManageOrders()">全部</a></li>
+                            }
+                            else
+                            {
+                                <li role="presentation"><a href="@NavigationUrls.Instance().ManageOrders()">全部</a></li>
+                            }
+                            @if (status == (int)OrderModifyStatus.Pay)
+                            {
+                                <li role="presentation" class="active"><a href="@NavigationUrls.Instance().ManageOrders((int)OrderModifyStatus.Pay)">待付款</a></li>
+                            }
+                            else
+                            {
+                                <li role="presentation"><a href="@NavigationUrls.Instance().ManageOrders((int)OrderModifyStatus.Pay)">待付款</a></li>
+                            }
+                            @if (status == (int)OrderModifyStatus.Send)
+                            {
+                                <li role="presentation" class="active"><a href="@NavigationUrls.Instance().ManageOrders((int)OrderModifyStatus.Send)">待发货</a></li>
+                            }
+                            else
+                            {
+                                <li role="presentation"><a href="@NavigationUrls.Instance().ManageOrders((int)OrderModifyStatus.Send)">待发货</a></li>
+                            }
+                            @if (status == (int)OrderModifyStatus.Collect)
+                            {
+                                <li role="presentation" class="active"><a href="@NavigationUrls.Instance().ManageOrders((int)OrderModifyStatus.Collect)">待收货</a></li>
+                            }
+                            else
+                            {
+                                <li role="presentation"><a href="@NavigationUrls.Instance().ManageOrders((int)OrderModifyStatus.Collect)">待收货</a></li>
+                            }
+                            
+                            @if (status == (int)OrderModifyStatus.Complete)
+                            {
+                                <li role="presentation" class="active"><a href="@NavigationUrls.Instance().ManageOrders((int)OrderModifyStatus.Complete)">已完成</a></li>
+                            }
+                            else
+                            {
+                                <li role="presentation"><a href="@NavigationUrls.Instance().ManageOrders((int)OrderModifyStatus.Complete)">已完成</a></li>
+                            }
+                            @if (status == (int)OrderModifyStatus.Cancel)
+                            {
+                                <li role="presentation" class="active"><a href="@NavigationUrls.Instance().ManageOrders((int)OrderModifyStatus.Cancel)">已取消</a></li>
+                            }
+                            else
+                            {
+                                <li role="presentation"><a href="@NavigationUrls.Instance().ManageOrders((int)OrderModifyStatus.Cancel)">已取消</a></li>
+                            }
+                            @if (status == (int)OrderModifyStatus.Flish)
+                            {
+                                <li role="presentation" class="active"><a href="@NavigationUrls.Instance().ManageOrders((int)OrderModifyStatus.Flish)">已结束</a></li>
+                            }
+                            else
+                            {
+                                <li role="presentation"><a href="@NavigationUrls.Instance().ManageOrders((int)OrderModifyStatus.Flish)">已结束</a></li>
+                            }
+                            @if (status == (int)OrderModifyStatus.Retreat)
+                            {
+                                <li role="presentation" class="active"><a href="@NavigationUrls.Instance().ManageOrders((int)OrderModifyStatus.Retreat)">退款中</a></li>
+                            }
+                            else
+                            {
+                                <li role="presentation"><a href="@NavigationUrls.Instance().ManageOrders((int)OrderModifyStatus.Retreat)">退款中</a></li>
+                            }
+                        </ul>
+                        <br />
+
+                        @using (Html.BeginForm("", "", FormMethod.Post, new { id = "manageGoodsForm", @Class = "table_form" }))
+                        {
+                            @if (Model.TotalRecords > 0)
+                            {
+                                @if (Model != null && Model.TotalRecords > 0)
+                                {
+                                    IOrderLineService orderLineService = DIContainer.Resolve<IOrderLineService>();
+                                    IGoodsSkuInfoService goodsSkuInfoService = DIContainer.Resolve<IGoodsSkuInfoService>();
+                                    IUserService userService = DIContainer.Resolve<IUserService>();
+                                    foreach (OrderInfo info in Model)
+                                    {
+                                        var orderLineModels = orderLineService.GetOrderLineEntitysByOrderid(info.Orderid);
+                                        <div class="panel panel-default panel_goods_order">
+                                            <!--折叠图标-->
+                                            <div class="jsCollapse collapse_icon fa fa-angle-down text-info"></div>
+                                            <div class="panel-heading jsPanelHead">
+                                                <table class="header_row">
+                                                    <tr>
+                                                        <td class="first_td"><span class="_label">买家名称：</span>@info.BuyersName</td>
+                                                        <td><span class="_label">买家手机号：</span>@info.BuyersPhone</td>
+                                                        <td><span class="_label">订单号：</span>@info.OrderNumber</td>
+                                                        <td><span class="_label">运单号：</span>@info.WaybillNumber</td>
+                                                        <td><span class="_label">外部单号：</span>@info.OtherTransactionCode</td>
+                                                        <td><span class="_label">订单总金额：</span>@info.OriginalPrice</td>
+                                                        <td><span class="_label">实际支付金额：</span>@info.RealPrice</td>
+                                                        <td><span class="_label">总优惠金额：</span>@info.SavePrice</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td class="first_td"><span class="_label">总退款金额：</span>@info.OrderRefundPrice</td>
+                                                        <td><span class="_label">订单类型：</span>@Utility.GetDisplayByEnumMemberInfo(typeof(OrderType), Enum.Parse(typeof(OrderType), info.OrderType.ToString()))</td>
+                                                        <td><span class="_label">支付方式：</span>@Utility.GetDisplayByEnumMemberInfo(typeof(OrderPayType), Enum.Parse(typeof(OrderPayType), info.PayType.ToString()))</td>
+                                                        <td><span class="_label">订单状态：</span>@Utility.GetDisplayByEnumMemberInfo(typeof(OrderModifyStatus), Enum.Parse(typeof(OrderModifyStatus), info.Status.ToString()))</td>
+                                                        <td><span class="_label">下单时间：</span>@info.DeteCreated.ToDateString(true)</td>
+                                                        <td><span class="_label">是否使用优惠券：</span>@(info.IsUse ? "是" : "否")</td>
+                                                        <td>
+                                                            <div class="btn-group">
+                                                                <button type="button" class="btn btn-xs btn-success dropdown-toggle"
+                                                                        data-toggle="dropdown">
+                                                                    操作 <span class="caret"></span>
+                                                                </button>
+                                                                <ul class="dropdown-menu" role="menu">
+                                                                    <li><a class="">发货</a></li>
+                                                                    <li><a href="@NavigationUrls.Instance().OrdersDetails(info.Orderid, info.Userid)">查看订单</a></li>
+                                                                    <li><a class="">查看维权</a></li>
+                                                                    <li class="divider"></li>
+                                                                    <li><a class="paylogs" data-url="@NavigationUrls.Instance().SeeOrderPayLogs(info.Orderid)" href="###">订单支付信息</a></li>
+                                                                    <li><a class="statuslogs" data-url="@NavigationUrls.Instance().SeeOrderStatusLogs(info.Orderid)" href="###">状态变更记录</a></li>
+                                                                </ul>
+                                                            </div>
+                                                        </td>
+                                                    </tr>
+                                                </table>
+                                            </div>
+
+
+
+                                            <div class="panel panel-success jsPanelBody" style="display:none;">
+                                                @foreach (OrderLine line in orderLineModels)
+                                                {
+                                                    var skuModel = goodsSkuInfoService.GetGoodsSkuInfo(line.Skuid);
+                                                    <div class="panel-body child_panel_body">
+                                                        <div class="left inline-block">
+                                                            <span>
+                                                                商品名称：@line.GoodsName
+                                                            </span>
+                                                            <span>
+                                                                规格：@(skuModel != null ? skuModel.SkuName : string.Empty)
+                                                            </span>
+                                                            <span>
+                                                                数量：@line.BuyCount
+                                                            </span>
+                                                            <span>
+                                                                单价：@line.GoodsLinePrice
+                                                            </span>
+                                                            <span>
+                                                                订单行总金额：@line.RealLinePrice
+                                                            </span>
+                                                            <span>
+                                                                订单行总退款金额：@line.RefundLinePrice
+                                                            </span>
+                                                            <span>
+                                                                订单行总优惠金额：@line.SaveLinePrice
+                                                            </span>
+                                                            <span>
+                                                                优惠后实付金额总金额：@line.SaveLineRealPrice
+                                                            </span>
+                                                        </div>
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                }
+
+                                <div>
+                                    @Html.PagingResults(Model)
+                                    @Html.PagingButton(Model)
+                                    <div class="clearfix"></div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="text-center">
+                                    搜索不到数据
+                                </div>
+                            }
+                        }
+                    </div>
+                    <br />
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- modal 弹框模板-->
+<div class="modal fade" id="ajaxDialog" tabindex="-1" role="dialog" aria-labelledby="modalLabel" data-backdrop="static">
+    <div id="dialog" class="modal-dialog modal-md" role="document">
+    </div>
+</div>
+
+
+@section Scripts{
+    <script>
+        /*
+        全选
+        */
+        $('.allCheck').on('ifClicked', function (event) {
+            var items = document.getElementsByClassName('jsOrderCheck');
+            for (var i = 0; i < items.length; i++) {
+                if (items[i].type == 'checkbox') {
+                    if (this.checked)
+                        $(items[i]).iCheck('uncheck');
+                    else {
+                        $(items[i]).iCheck('check');
+                    }
+                }
+            }
+        });
+ 
+        /*
+        搜索-日期带时间选择器
+        */
+        var picker1 = $('#datetimepicker1').datetimepicker({
+            format: 'YYYY-MM-DD HH:mm:ss',
+            locale: moment.locale('zh-cn'),
+            //maxDate: moment().add(1, 'days').format("YYYY-MM-DD")
+        });
+
+        var picker2 = $('#datetimepicker2').datetimepicker({
+            format: 'YYYY-MM-DD HH:mm:ss',
+            locale: moment.locale('zh-cn'),
+            //maxDate: moment().add(1, 'days').format("YYYY-MM-DD")
+        });
+
+        /*
+        折叠panel
+        */
+        $(".jsCollapse").click(function () {
+            var _this = $(this);
+            _this.siblings(".jsPanelBody").slideToggle(function () {
+                if (_this.hasClass("top")) {
+                    _this.removeClass("top");
+                } else {
+                    _this.addClass("top");
+                }
+
+            });
+        });
+
+        $(".paylogs").click(function () {
+            var url = $(this).data("url");
+            $.get(url, function (data) {
+                if (isJson(data)) {
+                    swal({
+                        title: data.messageContent,
+                        timer: 1500,
+                        showConfirmButton: false,
+                        type: 'error'
+                    });
+                } else {
+                    $("#dialog").removeClass().addClass("modal-dialog modal-lg").html(data);
+                    $('#ajaxDialog').modal('show');
+                }
+
+            })
+        });
+
+        $(".statuslogs").click(function () {
+            var url = $(this).data("url");
+            $.get(url, function (data) {
+                if (isJson(data)) {
+                    swal({
+                        title: data.messageContent,
+                        timer: 1500,
+                        showConfirmButton: false,
+                        type: 'error'
+                    });
+                } else {
+                    $("#dialog").removeClass().addClass("modal-dialog modal-lg").html(data);
+                    $('#ajaxDialog').modal('show');
+                }
+            })
+        });
+
+        function isJson(obj) {
+            var isjson = typeof (obj) == "object" && Object.prototype.toString.call(obj).toLowerCase() == "[object object]" && !obj.length;
+            return isjson;
+        }
+
+        $('#ajaxDialog').on("click", ".jsFansTable .pagination a", function (e) {
+            e.preventDefault();
+            var url = $(this).attr("href");
+            if (url.indexOf("###") === -1) {
+                $.ajax({
+                    method: "GET",
+                    url: url,
+                    success: function (data) {
+                        if (data.messageType <= 0) {
+                            swal(data.messageContent, "", "error");
+                            return;
+                        }
+                        $("#dialog").html(data);
+                    },
+                    error: function () {
+                        swal("系统异常", "", "error");
+                    }
+                });
+            }
+        });
+
+        function fn7DayAnd30Day(day) {
+            var picker1 = $('#datetimepicker1');
+            picker2 = $('#datetimepicker2'),
+                parent1 = picker1.parents(".input_box_2"),
+                parent2 = picker2.parents(".input_box_2"),
+                time1 = moment().subtract(day, 'days').format('YYYY-MM-DD') + " 00:00:00",
+                time2 = moment().format('YYYY-MM-DD') + " 00:00:00";
+
+            picker1.find(".jsTimeInput").val(time1);
+            picker2.find(".jsTimeInput").val(time2);
+
+            var newPick1 = picker1.clone(),
+                newPick2 = picker2.clone();
+
+            picker1.remove();
+            picker2.remove();
+
+            parent1.prepend(newPick1);
+            parent2.prepend(newPick2);
+
+            $('#datetimepicker1').datetimepicker({
+                format: 'YYYY-MM-DD HH:mm:ss',
+                locale: moment.locale('zh-cn')
+            });
+            $('#datetimepicker2').datetimepicker({
+                format: 'YYYY-MM-DD HH:mm:ss',
+                locale: moment.locale('zh-cn')
+            });
+        }
+        /*7天*/
+        $("#js7Day").click(function () {
+            fn7DayAnd30Day(7);
+        });
+
+        /*30天*/
+        $("#js30Day").click(function () {
+            fn7DayAnd30Day(30);
+        });
+
+    </script>
+}

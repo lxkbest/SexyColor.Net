@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Label="Globals">
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp1.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="4.4.0" />
+    <PackageReference Include="log4net" Version="2.0.8" />
+    <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="1.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="1.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Caching.Redis" Version="1.1.1" />
+    <PackageReference Include="MySql.Data" Version="7.0.6-IR31" />
+    <PackageReference Include="mySqlSugarCore" Version="3.5.4" />
+    <PackageReference Include="Qiniu.Shared" Version="7.2.15" />
+    <PackageReference Include="Quartz" Version="3.0.0-alpha2" />
+    <PackageReference Include="System.Security.Cryptography.Algorithms.Extensions" Version="1.0.0" />
+    <PackageReference Include="System.Security.Cryptography.Csp" Version="4.3.0" />
+    <PackageReference Include="ZKWeb.System.Drawing" Version="2.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+</Project>

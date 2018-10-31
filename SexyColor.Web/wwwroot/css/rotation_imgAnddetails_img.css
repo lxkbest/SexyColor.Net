@@ -1,0 +1,76 @@
+﻿.add_img_box {
+    padding-top: 20px;
+}
+
+    .add_img_box > * {
+        vertical-align: middle;
+    }
+
+.img_prev_box {
+    position: relative;
+    padding-bottom: 24px;
+}
+
+    .img_prev_box img {
+        height: 100px;
+        width: auto;
+        border: 1px solid #a94442;
+        padding: 4px;
+    }
+
+    .img_prev_box ._close {
+        position: absolute;
+        font-size: 20px;
+        right: 0;
+        top: -18px;
+        cursor: pointer;
+    }
+
+        .img_prev_box ._close._number {
+            font-size: 15px;
+            top: -22px;
+            left: 0;
+            right: initial;
+            text-align: center;
+            background-color: #a94442;
+            color: #fff;
+            padding: 0 5px;
+        }
+
+        .img_prev_box ._close._edit {
+            margin-right: 22px;
+        }
+
+    .img_prev_box .add_label {
+        display: inline-block;
+        height: 100px;
+        width: 100px;
+        background: beige;
+        font-size: 58px;
+        text-align: center;
+        font-weight: 100;
+        border: 1px solid transparent;
+        margin-bottom: 0;
+    }
+
+        .img_prev_box .add_label:hover {
+            border-color: brown;
+            color: brown;
+        }
+/*编辑图片*/
+.edit_img_left {
+    display: inline-block;
+    vertical-align: top;
+}
+
+    .edit_img_left img {
+        height: 100px;
+        width: auto;
+        border: 1px solid #a94442;
+        padding: 4px;
+    }
+
+.edit_img_right {
+    display: inline-block;
+    width: 400px;
+}

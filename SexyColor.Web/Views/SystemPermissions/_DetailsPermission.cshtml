@@ -1,0 +1,120 @@
+﻿@model DetailsPermissionModel
+@{
+    Layout = null;
+}
+<div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <h4 class="modal-title">权限详情</h4>
+        </div>
+        <div class="modal-body">
+            <form id="myForm" action="/" class="form-horizontal center-block" style="width:75%;">
+                <div class="row">
+                    <div class="form-group col-xs-12">
+                        <label class="control-label col-xs-2">权限项Key：</label>
+                        <div class="input_box col-xs-10">
+                            <div class="">
+                                @Html.TextBoxFor(w => w.Itemkey, new { @Class = "form-control", @readonly = "readonly" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-xs-6">
+                        <label class="control-label col-xs-4">权限名称：</label>
+                        <div class="input_box col-xs-8">
+                            <div class="width_170">
+                                @Html.TextBoxFor(w => w.Itemname, new { @Class = "form-control", @readonly = "readonly" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group col-xs-6">
+                        <label class="control-label col-xs-4">所属父级：</label>
+                        <div class="input_box col-xs-8">
+                            <div class="width_170">
+                                @Html.TextBoxFor(w => w.ParentsName, new { @Class = "form-control", @readonly = "readonly" })
+                                @Html.HiddenFor(w => w.Parentsid)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-xs-6">
+                        <label class="control-label col-xs-4">权限Url：</label>
+                        <div class="input_box col-xs-8">
+                            <div class="">
+                                @Html.TextBox("ItemUrl", Model.ItemUrl.IsNullOrWhiteSpace() ? "/" : Model.ItemUrl, new { @Class = "form-control", @readonly = "readonly" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group col-xs-6">
+                        <label class="control-label col-xs-4">是否新功能：</label>
+                        <div class="input_box col-xs-8">
+                            <div class="">
+                                @Html.TextBox("IsNewAction", Model.IsNewAction ? "是" : "否", new { @Class = "form-control", @readonly = "readonly" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-xs-6">
+                        <label class="control-label col-xs-4">所属应用：</label>
+                        <div class="input_box col-xs-8">
+                            <select asp-items="@Html.GetEnumSelectList(typeof(ApplicationidEnum))" class="form-control" readonly = "readonly"></select>
+                            @*@Html.DropDownListFor(m => m.Applicationid, new SelectList(ViewBag.AppEnums), "请选择", new { @Class = "form-control", @readonly = "readonly" })*@
+                        </div>
+                    </div>
+
+                    <div class="form-group col-xs-6">
+                        <label class="control-label col-xs-4">排序：</label>
+                        <div class="input_box col-xs-8">
+                            <div class="width_170">
+                                @Html.TextBoxFor(m => m.DisplayOrder, new { @Class = "form-control", @readonly = "readonly" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-xs-6">
+                        <label class="control-label col-xs-4">事件名称：</label>
+                        <div class="input_box col-xs-8">
+                            @Html.TextBoxFor(m => m.EventName, new { @Class = "form-control", @readonly = "readonly" })
+                        </div>
+                    </div>
+
+                    <div class="form-group col-xs-6">
+                        <label class="control-label col-xs-4">类型：</label>
+                        <div class="input_box col-xs-8">
+                            @Html.TextBox("ItemType", Model.ItemType == (int)PermissionItemsType.LeftMenu ? "左侧菜单" : "普通按钮", new { @Class = "form-control", @readonly = "readonly" })
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-xs-6">
+                        <label class="control-label col-xs-4">是否禁用：</label>
+                        <div class="input_box col-xs-8">
+                            <div class="width_170">
+                                @Html.TextBox("IsEnable", Model.IsEnable ? "启用" : "禁用", new { @Class = "form-control", @readonly = "readonly" })
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group col-xs-6">
+                        <label class="control-label col-xs-4">创建时间：</label>
+                        <div class="input_box col-xs-8">
+                            <div class="width_170">
+                                @Html.TextBoxFor(m => m.DateCreated, "{0:yyyy-MM-dd HH:mm:ss}", new { @Class = "form-control", @readonly = "readonly" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </form>
+            <div class="clearfix"></div>
+            <div class="modal-footer">
+                <button type="submit" form="myForm" class="btn btn-primary" data-dismiss="modal">确 定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
+            </div>
+        </div>
+    </div>
+</div>

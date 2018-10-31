@@ -1,0 +1,17 @@
+﻿@{
+    string inputName = ViewData.Get<string>("InputName", string.Empty);
+    bool showCaptchaImage = ViewData.Get<bool>("ShowCaptchaImage", false);
+    int randomNumber = new Random().Next(100000, 999999);
+    string captchaImageUrl = "/Handler/CaptchaHttp";
+}
+
+@if (showCaptchaImage)
+{
+    <div class="_3">
+        <input type="text" class="form-control " placeholder="验证码" required="" autocomplete="off" id="Captcha" name="Captcha" data-val="true" data-val-required="请输入验证码" />
+        <a id="@(inputName)_@(randomNumber)_refresh"><img id="CaptchaInputTextImg_@randomNumber" src="@(captchaImageUrl + "?date=" + randomNumber)" alt="" onclick="this.src='@(captchaImageUrl + "?date=" + randomNumber)'"></a>
+    </div>
+    @*<div class="clearfix _4">
+        <a id="@(inputName)_@(randomNumber)_refresh"></a>
+    </div>*@
+}

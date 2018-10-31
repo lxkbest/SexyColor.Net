@@ -1,0 +1,716 @@
+﻿@{
+    Layout = "~/Views/Shared/_SystemLayout.cshtml";
+}
+@section Styles{
+    <link rel="stylesheet" href="/vendors/ztree/metroStyle/metroStyle.css" />
+    <link rel="stylesheet" href="~/vendors/wang-editeor/wangEditor.min.css" />
+    <style>
+        .form_fixed {
+            display: block;
+        }
+            /*错误提示*/
+            .imgUpload_box label.error, .form_fixed .form-group label.error {
+                color: #d9534f;
+                font-weight: normal;
+                width: auto;
+                display: block;
+            }
+
+        .pre_next_box {
+            text-align: center;
+            padding-top: 10px;
+        }
+
+        .imgUpload_box {
+            vertical-align: top;
+        }
+
+        .goods_img_table {
+            margin: 10px 0;
+        }
+
+            .goods_img_table .goods_prev_img {
+                height: 100px;
+                width: auto;
+            }
+
+            .goods_img_table .imgUpload_box input {
+                visibility: hidden;
+                height: 0;
+                width: 0;
+                position: absolute;
+            }
+
+        .sku_right {
+            vertical-align: top;
+            padding-left: 6%;
+        }
+
+        .goods_details_box > * {
+            vertical-align: middle;
+        }
+
+        .goods_details_box > label {
+            padding-top: 0 !important;
+        }
+    </style>
+}
+<div class="">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <ol class="breadcrumb">
+                        <li><a href="#">系统后台</a></li>
+                        <li><a href="#">商品模块</a></li>
+                        <li class="active">添加商品</li>
+                    </ol>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <div class="" role="tabpanel" data-example-id="togglable-tabs">
+                        <ul id="myTab" class="nav nav-tabs bar_tabs" role="tablist">
+                            <li role="presentation" class="active">
+                                <a href="#tab_content1" id="home-tab" role="tab" aria-expanded="false">商品基本信息</a>
+                            </li>
+                            <li role="presentation" class="">
+                                <a href="#tab_content2" role="tab" id="profile-tab" aria-expanded="false">商品规格信息</a>
+                            </li>
+                            <li role="presentation">
+                                <a href="#tab_content3" role="tab" id="profile-tab3" aria-expanded="true">商品图片</a>
+                            </li>
+                        </ul>
+                        <div id="summary"></div>
+                        <form id="jsGoodsForm" class="form-horizontal form_fixed" asp-action="AddGoods" asp-controller="SystemGoods" enctype="multipart/form-data" role="form">
+                            <div id="myTabContent" class="tab-content">
+                                <!--商品基本信息-->
+                                <div role="tabpanel" class="tab-pane fade in active" id="tab_content1" aria-labelledby="home-tab">
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <label class="control-label">商品分类</label>
+                                            <div class="input_box" style="position:relative;">
+                                                <input id="jsTreeText" readonly="readonly" required type="text" class="form-control" name="name" value="" style="background-color:#fff;" placeholder="只可选中二级分类" />
+                                                <input id="jsTreeValue" type="hidden" name="CategoryLevel2Id" />
+                                                <ul id="jsTreeSelect" class="ztree custom_ztree"></ul>
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label">是否热门商品</label>
+                                            <div class="input_box">
+                                                <input type="checkbox" name="IsHot" value="false" class="form-control flat hidden" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label">是否可见</label>
+                                            <div class="input_box">
+                                                <input type="checkbox" name="IsVisible" value="false" class="form-control flat hidden" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label">是否指定运费</label>
+                                            <div class="input_box">
+                                                <input type="checkbox" id="jsIsFreight" class="form-control flat hidden">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <label class="control-label">商品名称</label>
+                                            <div class="input_box">
+                                                <input type="text" required name="GoodsName" class="form-control" style="width:294px;">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label">二级标题</label>
+                                            <div class="input_box">
+                                                <input type="text" required name="SubjectTitle" class="form-control" style="width:294px;">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="form-group">
+                                            <label class="control-label">原产地</label>
+                                            <div class="input_box">
+                                                <input type="text" name="PlaceOrigin" class="form-control" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label">排序序号</label>
+                                            <div class="input_box">
+                                                <input type="text" name="DisplayOrder" class="form-control" placeholder="">
+                                            </div>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="control-label">限购数量</label>
+                                            <div class="input_box">
+                                                <input type="text" name="LimitPurchaseCount" class="form-control" number="true" min="0" value="0" placeholder="">
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                    <div class="row">
+                                        <div id="jsIsFreightBox" class="form-group" style="display:none;">
+                                            <label class="control-label">运费</label>
+                                            <div class="input_box">
+                                                <input type="text" required name="Freight" class="form-control">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="pre_next_box">
+                                        <button type="button" data-next="tab_content2" class="btn btn-success btn-sm jsNextBtn">下一步</button>
+                                    </div>
+                                </div>
+                                <!--商品规格信息-->
+                                <div role="tabpanel" class="tab-pane fade" id="tab_content2" aria-labelledby="profile-tab">
+                                    <!--sku数组-->
+                                    <input type="hidden" id="jsSKUArr" name="SkuArr" value="" />
+                                    <div id="jsSKUBox">
+                                        <div class="x_panel">
+                                            <div class="x_title">
+                                                <h2 class="jsIndex" data-index="1">商品规格信息-1</h2>
+                                                <ul class="nav navbar-right panel_toolbox">
+                                                    <li>
+                                                        <a class="collapse-link"><i class="fa fa-chevron-up"></i></a>
+                                                    </li>
+                                                </ul>
+                                                <div class="clearfix"></div>
+                                            </div>
+                                            <div class="x_content">
+                                                <div class="inline-block jsSKULeft">
+                                                    <div class="form-group">
+                                                        <div class="sku_preview_img_box">
+                                                            <img class="jsSKUPreviewImg" height="80" src="" onerror="this.src='/images/img_error.png'" />
+                                                        </div>
+                                                    </div>
+                                                    <br />
+                                                    <div class="form-group">
+                                                        <div class="inline-block imgUpload_box">
+                                                            <label for="imgSKUUpload" class="btn btn-sm btn-info file-upload"><i class="fa fa-image"></i> 选择图片</label>
+                                                            <input id="imgSKUUpload" required class="SKUImgINput" name="skufiles" type="file" style="visibility: hidden;" mulpitle />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="inline-block sku_right">
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <label class="control-label">是否默认</label>
+                                                            <div class="input_box jsISDefaultBox">
+                                                                <input type="hidden" class="jsISDefaultHide" name="IsDefault1" value="true">
+                                                                <input type="checkbox" checked="checked" class="form-control jsISDefaultCheck flat" style="display:none;">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <label class="control-label">商品规格名称</label>
+                                                            <div class="input_box">
+                                                                <input id="jsSKUName" type="text" required name="SkuName1" class="form-control" placeholder="">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label">商品规格进货价</label>
+                                                            <div class="input_box">
+                                                                <input id="jsSKUOriginalPrice" required number="true" min="0" type="text" name="SkuOriginalPrice1" class="form-control" placeholder="">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label">商品规格市场价</label>
+                                                            <div class="input_box">
+                                                                <input id="jsSKUMaketPrice" required number="true" min="0" type="text" name="SkuMaketPrice1" class="form-control" placeholder="">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <label class="control-label">商品规格销售价</label>
+                                                            <div class="input_box">
+                                                                <input id="jsSKUFactoryPrice" number="true" min="0" required type="text" name="SkuFactoryPrice1" class="form-control" placeholder="">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label">商品规格会员价</label>
+                                                            <div class="input_box">
+                                                                <input id="jsSKUVipPrice" number="true" min="0" required type="text" name="SkuVipPrice1" class="form-control" placeholder="">
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <label class="control-label">库存</label>
+                                                            <div class="input_box">
+                                                                <input id="jsStock" required number="true" min="0" type="text" name="Stock1" class="form-control">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="row">
+                                                        <div class="form-group">
+                                                            <label class="control-label">序号</label>
+                                                            <div class="input_box">
+                                                                <input required number="true" min="0" type="text" class="form-control" name="Number1">
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <button type="button" id="jsAddGoodsSKU" class="btn btn-info btn-md"><i class="fa fa-plus"></i>&nbsp;添加商品规格</button>
+                                    </div>
+                                    <div class="pre_next_box">
+                                        <button type="button" data-next="tab_content1" class="btn btn-success btn-sm jsNextBtn">上一步</button>
+                                        <button type="button" data-next="tab_content3" id="jsSKUNext" class="btn btn-success btn-sm jsNextBtn">下一步</button>
+                                    </div>
+                                </div>
+                                <!--商品图片-->
+                                <div role="tabpanel" class="tab-pane fade" id="tab_content3" aria-labelledby="profile-tab">
+                                    <h4>商品轮播图片</h4>
+                                    <button id="jsaddCarouselBtn" type="button" class="btn btn-info"><i class="fa fa-plus"></i>添加轮播图片</button>
+                                    <table class="goods_img_table jsGoodsImgTable"></table>
+
+                                    <h4>商品详情图片</h4>
+                                    <div class="goods_details_box">
+                                        <label class="control-label">是否开启图文混排</label>
+                                        <input type="checkbox" id="isRichTextCheck" name="IsRichText" value="false" class="form-control flat hidden">
+                                        &nbsp;&nbsp;
+                                        <span>默认不开启，商品只使用图片展示详情。</span>
+                                    </div>
+                                    <br />
+                                    <!--富文本-->
+                                    <input id="jsGoodsDetailsImg" type="hidden" name="goodsDetailsImg" value="" />
+                                    <div id="jsEditor">
+
+                                    </div>
+                                    <div class="pre_next_box">
+                                        <button type="button" data-next="tab_content2" class="btn btn-success btn-sm jsNextBtn">上一步</button>
+                                        <button type="submit" class="btn btn-success btn-sm"><i class="fa fa-save"></i>&nbsp;确定发布商品</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts{
+    <script src="/vendors/ztree/jquery.ztree.core.min.js"></script>
+    <script src="~/vendors/wang-editeor/wangEditor.min.js"></script>
+    <script src="~/lib//jquery-validation//src//localization//messages_zh.js"></script>
+    <script>
+
+        /**********************全局变量***********************/
+        var G_$goodsForm = $("#jsGoodsForm");
+
+        G_$goodsForm.find(".flat").on('ifChanged', function (event) {
+            $(this).val(this.checked);
+        });
+
+        /**********************下一步切换***********************/
+        $(".jsNextBtn").click(function () {
+            var data = $(this).data();
+            nextTab = data.next;
+            var isValidation = G_$goodsForm.valid();
+            if (isValidation) {
+                $('#myTab a[href="#' + nextTab + '"]').tab('show')
+            }
+
+        });
+
+        //临时调试
+        $('#myTab a[href="#tab_content1"]').tab('show');
+
+        /**********************商品基本信息***********************/
+        (function () {
+            var G_$treeText = $("#jsTreeText"),
+                G_$ztreeUl = $("#jsTreeSelect"),
+                G_$treeVlaue = $("#jsTreeValue");
+
+            var setting = {
+            async: {
+                enable: true,
+                url: '@NavigationUrls.Instance().JsonCategory2()',
+                autoParam: ["id=categoryLevelId"],
+                otherParam: { "otherParam": "zTreeAsyncTest" },
+                dataFilter: filter
+            },
+            callback: {
+                onClick:clickNode
+            }
+        };
+        //单机节点事件
+        function clickNode(event, treeId, treeNode) {
+            if (!treeNode.isParent) {
+                G_$treeText.val(treeNode.name).blur();
+                G_$treeVlaue.val(treeNode.id);
+                G_$ztreeUl.hide();
+            }
+
+        }
+
+        //树节点过滤器
+        function filter(treeId, parentNode, childNodes) {
+            if (!childNodes) return null;
+            //for (var i = 0, l = childNodes.length; i < l; i++) {
+            //    childNodes[i].text = childNodes[i].text.replace(/\.n/g, '.');
+            //}
+            return childNodes;
+        }
+
+        //初始化ztree
+        $.getJSON("@NavigationUrls.Instance().JsonCategory()", function (data) {
+            $.fn.zTree.init($("#jsTreeSelect"), setting,data);
+        })
+
+
+        //显示ztree
+        G_$treeText.click(function () {
+            G_$ztreeUl.show();
+        });
+
+        //是否制定运费
+        $("#jsIsFreight").on('ifChanged', function (event) {
+            var $inputBox = $("#jsIsFreightBox"),
+                $input = $inputBox.find("#jsIsFreight");
+            if (this.checked) {
+                $inputBox.show();
+            } else {
+                $inputBox.hide();
+                $input.val("");
+            }
+        });
+
+        })();
+
+
+
+        /**********************商品规格***********************/
+        var $skuBox = $("#jsSKUBox");
+        (function () {
+            var SKU_COUNT = 1,
+                $skuNextBtn = $("#jsSKUNext"),
+                $skuArrInput = $("#jsSKUArr");
+            //添加商品SKU
+            $("#jsAddGoodsSKU").click(function () {
+                SKU_COUNT++;
+                var strVar = "";
+                strVar += "<div class=\"clearfix\"></div> <div class=\"x_panel\">";
+                strVar += "  <div class=\"x_title\">\n";
+                strVar += "                                            <h2 class=\"jsIndex\" data-index=\"" + SKU_COUNT + "\">商品规格信息-" + SKU_COUNT + "<\/h2>\n";
+                strVar += "                                            <ul class=\"nav navbar-right panel_toolbox\">\n";
+                strVar += "                                                <li>\n";
+                strVar += "                                                    <a class=\"collapse-link\"><i class=\"fa fa-chevron-up\"><\/i><\/a>\n";
+                strVar += "                                                <\/li>\n";
+                strVar += "                                                <li>\n";
+                strVar += "                                                    <a class=\"close-link-sku\"><i class=\"fa fa-close text-danger\"><\/i><\/a>\n";
+                strVar += "                                                <\/li>\n";
+                strVar += "                                            <\/ul>\n";
+                strVar += "                                            <div class=\"clearfix\"><\/div>\n";
+                strVar += "                                        <\/div>\n";
+                strVar += "                                        <div class=\"x_content\">\n";
+                strVar += "                                            <div class=\"inline-block jsSKULeft \">\n";
+                strVar += "                                                <div class=\"form-group\">\n";
+                strVar += "                                                    \n";
+                strVar += "                                                    <div class=\"sku_preview_img_box\">\n";
+                strVar += "                                                        <img class=\"jsSKUPreviewImg\" height=\"80\" src=\"\" onerror=\"this.src='/images/img_error.png'\" />\n";
+                strVar += "                                                    <\/div>\n";
+                strVar += "                                                <\/div>\n";
+                strVar += "                                                <br />\n";
+                strVar += "                                                <div class=\"form-group\">\n";
+                strVar += "                                                    <div class=\"inline-block imgUpload_box\">\n";
+                strVar += "                                                        <label for=\"SKUImgUpload" + SKU_COUNT + "\" class=\"btn btn-sm btn-info file-upload\"><i class=\"fa fa-image\"><\/i> 选择图片<\/label>\n";
+                strVar += "                                                        <input id=\"SKUImgUpload" + SKU_COUNT + "\" required class=\"SKUImgINput\" name=\"skufiles\" type=\"file\" style=\"visibility:hidden;\" mulpitle />\n";
+                strVar += "                                                    <\/div>\n";
+                strVar += "                                                <\/div>\n";
+                strVar += "                                            <\/div>\n";
+                strVar += "                                            <div class=\"inline-block sku_right\">\n";
+                //是否默认
+                strVar += "<div class=\"row\">\n";
+                strVar += "	<div class=\"form-group\">\n";
+                strVar += "		<label class=\"control-label \">是否默认<\/label>\n";
+                strVar += "		<div class=\"input_box jsISDefaultBox \">\n";
+                strVar += "         <input type=\"hidden\" class=\"jsISDefaultHide\" name=\"IsDefault" + SKU_COUNT + "\">";
+                strVar += "			<input type=\"checkbox\" class=\"jsISDefaultCheck form-control flat\" style=\"display:none;\">\n";
+                strVar += "		<\/div>\n";
+                strVar += "	<\/div>\n";
+                strVar += "<\/div>\n";
+                //end 是否默认
+                strVar += "                                                <div class=\"row\">\n";
+                strVar += "                                                    <input type=\"hidden\" name=\"name\" id=\"jsSKUId\" value=\"\" />\n";
+                strVar += "                                                    <div class=\"form-group\">\n";
+                strVar += "                                                        <label class=\"control-label\">商品规格名称<\/label>\n";
+                strVar += "                                                        <div class=\"input_box\">\n";
+                strVar += "                                                            <input type=\"text\" required name=\"SkuName" + SKU_COUNT + "\" class=\"form-control\" placeholder=\"\">\n";
+                strVar += "                                                        <\/div>\n";
+                strVar += "                                                    <\/div>\n";
+                strVar += "                                                    <div class=\"form-group\">\n";
+                strVar += "                                                        <label class=\"control-label\">商品规格进货价<\/label>\n";
+                strVar += "                                                        <div class=\"input_box\">\n";
+                strVar += "                                                            <input type=\"text\" required name=\"SkuOriginalPrice" + SKU_COUNT + "\" class=\"form-control\" placeholder=\"\">\n";
+                strVar += "                                                        <\/div>\n";
+                strVar += "                                                    <\/div>\n";
+                strVar += "                                                    <div class=\"form-group\">\n";
+                strVar += "                                                        <label class=\"control-label\">商品规格市场价<\/label>\n";
+                strVar += "                                                        <div class=\"input_box\">\n";
+                strVar += "                                                            <input type=\"text\" required name=\"SkuMaketPrice" + SKU_COUNT + "\" class=\"form-control\" placeholder=\"\">\n";
+                strVar += "                                                        <\/div>\n";
+                strVar += "                                                    <\/div>\n";
+                strVar += "                                                <\/div>\n";
+                strVar += "                                                <div class=\"row\">\n";
+                strVar += "                                                    <div class=\"form-group\">\n";
+                strVar += "                                                        <label class=\"control-label\">商品规格销售价<\/label>\n";
+                strVar += "                                                        <div class=\"input_box\">\n";
+                strVar += "                                                            <input type=\"text\" required name=\"SkuFactoryPrice" + SKU_COUNT + "\" class=\"form-control\" placeholder=\"\">\n";
+                strVar += "                                                        <\/div>\n";
+                strVar += "                                                    <\/div>\n";
+                strVar += "                                                    <div class=\"form-group\">\n";
+                strVar += "                                                        <label class=\"control-label\">商品规格会员价<\/label>\n";
+                strVar += "                                                        <div class=\"input_box\">\n";
+                strVar += "                                                            <input type=\"text\" required name=\"SkuVipPrice" + SKU_COUNT + "\" class=\"form-control\" placeholder=\"\">\n";
+                strVar += "                                                        <\/div>\n";
+                strVar += "                                                    <\/div>\n";
+                strVar += "                                                    <div class=\"form-group\">\n";
+                strVar += "                                                        <label class=\"control-label\">库存<\/label>\n";
+                strVar += "                                                        <div class=\"input_box\">\n";
+                strVar += "                                                            <input type=\"text\" required name=\"Stock" + SKU_COUNT + "\" class=\"form-control\" placeholder=\"\">\n";
+                strVar += "                                                        <\/div>\n";
+                strVar += "                                                    <\/div>\n";
+                strVar += "                                                <\/div>\n";
+                //序号
+                strVar += "<div class=\"row\">\n";
+                strVar += "	<div class=\"form-group\">\n";
+                strVar += "		<label class=\"control-label\">序号<\/label>\n";
+                strVar += "		<div class=\"input_box\">\n";
+                strVar += "			<input required number=\"true\" min=\"0\" type=\"text\" class=\"form-control\"name=\"Number" + SKU_COUNT +"\" >\n";
+                strVar += "		<\/div>\n";
+                strVar += "	<\/div>\n";
+                strVar += "<\/div>\n";
+                //end 序号
+                strVar += "                                            <\/div>\n";
+                strVar += "                                        <\/div><\/div>\n";
+                $skuBox.append(strVar);
+                initIcheck();
+            });
+            //获取所有sku的索引
+            $skuNextBtn.click(function () {
+                var indexArr=[],
+                    $indexs = $skuBox.find(".jsIndex");
+                $.each($indexs,function (index, element) {
+                    var index = $(element).data("index");
+                    indexArr.push(index);
+                });
+                var str = indexArr.join(",");
+                $skuArrInput.val(str);
+            });
+            //移除单个sku
+            $skuBox.on("click", ".close-link-sku", function () {
+                $(this).closest('.x_panel').remove();
+                SKU_COUNT--;
+                var $indexs = $skuBox.find(".jsIndex");
+                $indexs.each(function (index,element) {
+                    $(this).text("商品规格信息-"+(index+1));
+                });
+            });
+            //sku预览图片
+            $skuBox.on("change", ".SKUImgINput", function () {
+                var img = $(this).parents(".jsSKULeft").find(".jsSKUPreviewImg")[0];
+                imagePreview(this, img);
+            });
+            /*初始化icheck*/
+            function initIcheck() {
+                $('input.flat').iCheck({
+                    checkboxClass: 'icheckbox_flat-green',
+                    radioClass: 'iradio_flat-green'
+                });
+            }
+
+            //只能有一个是否默认被勾中
+            $skuBox.on("ifClicked", ".jsISDefaultCheck", function () {
+                $(".jsISDefaultCheck").iCheck('uncheck');
+                $(".jsISDefaultHide").val("");
+                var $ichecks = $(this).iCheck('check').parents(".jsISDefaultBox").find(".jsISDefaultHide");
+                $ichecks.val(this.checked);
+            });
+
+        })();
+
+
+        /**********************商品图片***********************/
+        var G_imgTable = $(".jsGoodsImgTable"),
+            G_COUNT = 0;
+        //添加轮播图片
+        $("#jsaddCarouselBtn").click(function () {
+            G_COUNT++;
+            var strVar = "";
+            strVar += " <tr>\n";
+            strVar += "                                            <td>\n";
+            strVar += "                                                <div class=\"carousel_img_box jsImgPrevBox\">\n";
+            strVar += "\n";
+            strVar += "                                                <\/div>\n";
+            strVar += "                                            <\/td>\n";
+            strVar += "                                            <td>\n";
+            strVar += "                                               &nbsp; &nbsp;<div class=\"inline-block imgUpload_box\">\n";
+            strVar += "                                                    <label for=\"" + G_COUNT + "\" class=\"btn btn-sm btn-info file-upload\"><i class=\"fa fa-image\"><\/i> 选择图片<\/label>\n";
+            strVar += "                                                    <input required=\"true\" id=\"" + G_COUNT + "\" class=\"jsGoodsImgInput\" name=\"imgfiles\" type=\"file\" style=\"visibility: hidden;\" mulpitle />\n";
+            strVar += "                                                <\/div>\n";
+            strVar += "                                                <label class=\"btn btn-sm btn-info file-upload jsDeleteGoodsImg\"><i class=\"fa fa-trash\"><\/i> 删除图片<\/label>\n";
+            strVar += "                                            <\/td>\n";
+            strVar += "                                        <\/tr>\n";
+            G_imgTable.append(strVar);
+        });
+
+        //预览图片
+        G_imgTable.on("change", ".jsGoodsImgInput", function () {
+            var prevImgBox = $(this).closest("tr").find(".jsImgPrevBox");
+            prevImgBox.empty();
+            $prevImg = $("<img class=\"jsPrevImg goods_prev_img\" />").appendTo(prevImgBox);
+            imagePreview(this, $prevImg[0]);
+        });
+
+        //删除图片
+        G_imgTable.on("click", ".jsDeleteGoodsImg", function () {
+            $(this).closest("tr").remove();
+        });
+
+        //商品详情富文本
+        function fnPrevDetailsImg(img, files) {
+                for (var i = 0; i < files.length; i++) {
+                    var file = files[i];
+                    img.file = file;
+                    var reader = new FileReader();
+                    reader.onload = (function (aImg) {
+                        return function (e) {
+                            aImg.src = e.target.result;
+                        };
+                    })(img);
+                    reader.readAsDataURL(file);
+                }
+            }
+
+            var E = window.wangEditor
+            var editor = new E('#jsEditor');
+            editor.customConfig.debug = false;
+            // 自定义菜单配置
+            editor.customConfig.menus = [
+                'head',  // 标题
+                'bold',  // 粗体
+                'italic',  // 斜体
+                'underline',  // 下划线
+                'strikeThrough',  // 删除线
+                'foreColor',  // 文字颜色
+                'backColor',  // 背景颜色
+                'link',  // 插入链接
+                'list',  // 列表
+                'justify',  // 对齐方式
+                'quote',  // 引用
+                'emoticon',  // 表情
+                'image',  // 插入图片
+                'table',  // 表格
+                //'video',  // 插入视频
+                //'code',  // 插入代码
+                'undo',  // 撤销
+                'redo'  // 重复
+            ];
+            editor.customConfig.uploadImgServer = "@NavigationUrls.Instance().EditorUpload()";  // 上传图片到服务器
+            editor.customConfig.uploadImgMaxSize = 3 * 1024 * 1024; // 将图片大小限制为 3M
+            editor.customConfig.uploadImgTimeout = 99999  // 将 timeout 时间改为多少秒
+            editor.customConfig.uploadImgHooks = {
+                before: function (xhr, editor, files) {
+                    // 请求发送之前
+
+                },
+                success: function (xhr, editor, result) {
+                    // 上传成功之后
+                    // result 是服务器端返回的结果
+                    if (result.errno !== 0) {
+                        swal("上传失败！", "", "error");
+                        return false;
+                    }
+                },
+                fail: function (xhr, editor, result) {
+                    // 上传失败之后
+                    // result 是服务器端返回的结果
+                    swal("上传失败！", "", "error");
+                },
+                error: function (xhr, editor) {
+                    // 请求发生错误
+                    swal("请求发生错误！", "", "error");
+                },
+                timeout: function (xhr, editor) {
+                    // 请求超时
+                    swal("请求超时！","","error");
+                }
+            }
+
+            editor.create();
+
+        /**********************商品添加表单校验***********************/
+        G_$goodsForm.validate({
+            submitHandler: function (form) {
+                //判断是否是图文混排
+                var $jsGoodsDetailsImg = $("#jsGoodsDetailsImg"),
+                    editorHtml = editor.txt.html();
+
+                if ($("#isRichTextCheck").prop("checked")) {
+                    $jsGoodsDetailsImg.val(editorHtml);
+                } else {
+                    var imgUrlArr = matchingImgUrl(editorHtml);
+                    if (imgUrlArr.length > 0) {
+                        $jsGoodsDetailsImg.val(imgUrlArr.join(","));
+                    }
+                }
+                $(form).ajaxSubmit({
+                    success: function (data) {
+                        var msg = data.messageContent;
+                        debugger
+                        if (data.messageType!==1) {
+                            swal(msg, "", "warning");
+                        } else {
+                            swal({
+                                title: msg,
+                                timer: 1500,
+                                showConfirmButton: false,
+                                type: 'success'
+                            });
+                            setTimeout(function () { location.href="@NavigationUrls.Instance().ManageGoods()"; }, 2000);
+                        }
+                    },
+                    error: function () {
+                        swal("系统异常！","","error");
+                    }
+                });
+            }
+        });
+
+
+        //匹配字符串中图片的src
+        function matchingImgUrl(str) {
+            //思路分两步：作者（yanue）.
+            //1，匹配出图片img标签（即匹配出所有图片），过滤其他不需要的字符
+            //2.从匹配出来的结果（img标签中）循环匹配出图片地址（即src属性）
+
+            //匹配图片（g表示匹配所有结果i表示区分大小写）
+            var imgReg = /<img.*?(?:>|\/>)/gi;
+            //匹配src属性
+            var srcReg = /src=[\'\"]?([^\'\"]*)[\'\"]?/i;
+            var arr = str.match(imgReg);
+            var imgUrlArr = [];
+            if (!arr) return imgUrlArr;
+            for (var i = 0; i < arr.length; i++) {
+                var src = arr[i].match(srcReg);
+                //获取图片地址
+                if (src[1]) {
+                    //alert('已匹配的图片地址' + (i + 1) + '：' + src[1]);
+                    imgUrlArr.push(src[1]);
+                }
+                //当然你也可以替换src属性
+                //if (src[0]) {
+                //    var t = src[0].replace(/src/i, "href");
+                //}
+            }
+            return imgUrlArr;
+
+        }
+
+    </script>
+}

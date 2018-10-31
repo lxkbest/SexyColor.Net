@@ -1,0 +1,10 @@
+﻿@{
+    StatusMessageData statusMessage = ViewData.Get<StatusMessageData>("StatusMessageData", new StatusMessageData(StatusMessageType.Success, "操作成功"));
+    int hintMillisecondForHide = ViewData.Get<int>("HintMillisecondForHide", -1);
+}
+@if (statusMessage.MessageType == StatusMessageType.Error)
+{
+    <div name="StatusMessageDiv">
+        <strong>错误：</strong>@Html.Raw(statusMessage.MessageContent)
+    </div>
+}

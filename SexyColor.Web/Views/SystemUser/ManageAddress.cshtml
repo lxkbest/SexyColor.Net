@@ -1,0 +1,360 @@
+﻿@model PagingDataSet<UserAddress>
+@{
+    Layout = "~/Views/Shared/_SystemLayout.cshtml";
+    var currentUrl = RequestHelper.RawUrl(HttpContextCore.Current.Request);
+}
+<div class="">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <ol class="breadcrumb">
+                        <li><a href="#">系统后台</a></li>
+                        <li><a href="#">用户模块</a></li>
+                        <li class="active">地址管理</li>
+                    </ol>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <div class="table-responsive">
+                        @using (Html.BeginForm("ManageAddress", "SystemUser", FormMethod.Get, new { @Class = "form-horizontal form_fixed" }))
+                        {
+                            @Html.Hidden("returnUrl", currentUrl)
+                            <div class="row">
+
+                                <div class="form-group">
+                                    <label class="control-label">用户名</label>
+                                    <div class="input_box">
+                                        <input type="text" name="userName" value="@ViewData["userName"]" class="form-control" placeholder="用户名">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label">收件人</label>
+                                    <div class="input_box">
+                                        <input type="text" name="name" value="@ViewData["name"]" class="form-control" placeholder="收件人">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label">手机号码</label>
+                                    <div class="input_box">
+                                        <input type="text" name="phone" value="@ViewData["phone"]" class="form-control" placeholder="手机号码">
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+
+                                <div class="form-group">
+                                    <label class="control-label">省</label>
+                                    <div class="input_box">
+                                        <select class="form-control" id="jsProvincesSelect" name="provinceid">
+                                            <option value="">全部</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label">市</label>
+                                    <div class="input_box">
+                                        <select class="form-control" id="jsCitySelect" name="cityid">
+                                            <option value="">全部</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label">区</label>
+                                    <div class="input_box">
+                                        <select class="form-control" id="jsAreaSelect" name="areaid">
+                                            <option value="">全部</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+                            <div class="row">
+
+                                <div class="form-group">
+                                    <label class="control-label">收件地址</label>
+                                    <div class="input_box">
+                                        <input type="text" name="address" value="@ViewData["address"]" class="form-control" placeholder="收件地址">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label">是否默认地址</label>
+                                    <div class="input_box">
+                                        @Html.DropDownList("isDefault", ViewData["IsDefault"] as IEnumerable<SelectListItem>, "全部", new { @Class = "form-control" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label">是否启用</label>
+                                    <div class="input_box">
+                                        @Html.DropDownList("isDeleted", ViewData["IsDeleted"] as IEnumerable<SelectListItem>, "全部", new { @Class = "form-control" })
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group pull-right">
+                                    <label class="control-label"></label>
+                                    <div class="input_box">
+                                        <button type="button" class="jsEmpty btn btn-default _submit">
+                                            <i class="fa fa-refresh"></i>
+                                            重 置
+                                        </button>
+                                        <button type="submit" class="btn btn-success _submit">
+                                            <i class="fa fa-search"></i>
+                                            搜 索
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="clearfix"></div>
+                        }
+                        <div class="x_content text-right">
+                            <button type="button" id="jsEnable" class="btn btn-info btn-sm">
+                                启用
+                            </button>
+                            <button type="button" id="jsDisable" class="btn btn-info btn-sm">未启用</button>
+                        </div>
+
+                        @using (Html.BeginForm("", "", FormMethod.Post, new { id = "userAddressForm", @Class = "table_form" }))
+                        {
+
+                            @Html.Hidden("returnUrl", currentUrl)
+                            @if (Model.TotalRecords > 0)
+                            {
+                                <table class="table table-striped jambo_table bulk_action">
+                                    <thead>
+                                        <tr class="headings">
+                                            <th><input type="checkbox" class="allCheck flat"></th>
+                                            <th class="column-title">用户名</th>
+                                            <th class="column-title">收件人</th>
+                                            <th class="column-title">手机号码</th>
+                                            <th class="column-title">收件地址</th>
+                                            <th class="column-title">省市区</th>
+                                            <th class="column-title">是否默认地址</th>
+                                            <th class="column-title">是否启用</th>
+                                            <th class="column-title no-link last"> <span class="nobr">操作</span></th>
+                                        </tr>
+                                    </thead>
+                                    @if (Model != null && Model.TotalRecords > 0)
+                                    {
+                                        foreach (UserAddress userAddress in Model)
+                                        {
+                                            IUserService userService = DIContainer.Resolve<IUserService>();
+                                            User user = userService.GetFullUser(userAddress.Userid);
+                                            <tr class="pointer">
+                                                <td>
+                                                    <label>
+                                                        @Html.CustomCheckBox("customCheck", userAddress.Id, false, new { @class = "flat" })
+                                                    </label>
+                                                </td>
+                                                <td class="td_user">
+                                                    @(user != null ? user.UserName : "")
+                                                </td>
+                                                <!--收件人-->
+                                                <td class="td_user">
+                                                    @(userAddress.Name)
+                                                </td>
+                                                <!--手机号码-->
+                                                <td>@(userAddress.Phone)</td>
+                                                <!--收件地址-->
+                                                <td>
+                                                    @(userAddress.Address)
+                                                </td>
+                                                <!--省市区-->
+                                                <td>@(userAddress.ProvinceCityArea )</td>
+                                                <!--是否默认地址-->
+                                                <td>@(userAddress.IsDefault ? "是" : "否")</td>
+                                                <!--是否已经删除-->
+                                                <td>@(userAddress.IsDeleted ? "是" : "否")</td>
+                                                <!--选项-->
+                                                <td class="last">
+                                                    <div class="dropdown">
+                                                        <button id="dLabel" class="btn btn-info btn-xs" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                                            选项
+                                                            <span class="caret"></span>
+                                                        </button>
+                                                        <ul class="dropdown-menu" aria-labelledby="dLabel">
+                                                            <li>
+                                                                <a class="jsDetails" href="###" data-backdrop="static" data-url="@NavigationUrls.Instance().UserAddressDetails(userAddress.Id)">详情</a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                            </tr>
+
+                                        }
+                                    }
+                                </table>
+                                <div>
+                                    @Html.PagingResults(Model)
+                                    @Html.PagingButton(Model)
+                                    <div class="clearfix"></div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="text-center">
+                                    搜索不到数据
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- modal 弹框模板-->
+<div class="modal fade" id="ajaxDialog" tabindex="-1" role="dialog" aria-labelledby="modalLabel" data-backdrop="static">
+    <div id="dialog" class="modal-dialog modal-md" role="document">
+    </div>
+</div>
+
+
+@section Scripts{
+    <script>
+        $(function () {
+            /* 全局变量 2017-5-16 伍冠源 */
+
+            var G_$userRolesForm = $('#userRolesForm'), //用户角色表格表单
+                G_$rolesDialog = $('#ajaxDialog');//编辑弹框
+
+            /*编辑角色 2017-5-16 伍冠源*/
+            $(".jsDetailsBtn").click(function (e) {
+                e.preventDefault;
+
+                $.get(url, function (html) {
+                    G_$rolesDialog.find('#dialog').removeClass().addClass("modal-dialog modal-lg").html(html);
+                    G_$rolesDialog.modal('show');
+                })
+            });
+
+             /* 全局变量 2017-5-17 伍冠源 */
+            var $provincesSelect = $("#jsProvincesSelect"),
+                $citySelect = $("#jsCitySelect"),
+                $areaSelect = $("#jsAreaSelect");
+
+            /*遍历并添加option到select元素 伍冠源*/
+            function appendSelect($ele,data,id,name) {
+                var str = "<option value=''>全部</option>";
+                $.each(data, function (index, value) {
+                    str += "<option value='" + value[id] + "'>" + value[name] + "</option>";
+                });
+                $ele.empty().append(str);
+
+            }
+            /*页面一加载获取省市 2017-5-17 伍冠源*/
+            $.get("@NavigationUrls.Instance().Getprovinces()", function (data) {
+                if (data) {
+                    appendSelect($provincesSelect, data, "provinceid", "provincename");
+                    var provinceId = "@ViewData["provinceid"]",
+                        cityid = "@ViewData["cityid"]";
+                    if ($.trim(provinceId) !== "") {
+                        $provincesSelect.val(provinceId);
+                        $provincesSelect.triggerHandler("change", { provinceId: provinceId });
+                        if ($.trim(cityid) !== "") {
+                            debugger
+                            $citySelect.triggerHandler("change", { cityid: cityid });
+                        }
+
+                    }
+
+
+                }
+            })
+            /*省改变获取市 2017-5-17 伍冠源*/
+            $provincesSelect.change(function (e,p) {
+                debugger
+                var id;
+                p ? id = p.provinceId : id = $(this).val();
+                $.get("@NavigationUrls.Instance().GetCitys()", { provincesId:id} ,function (data) {
+                    if (data) {
+                        appendSelect($citySelect, data, "cityid", "cityname");
+                        p ? $citySelect.val("@ViewData["cityid"]") : $citySelect.triggerHandler("change");
+                    }
+                });
+
+           });
+             /*市改变获取区域 2017-5-17 伍冠源*/
+            $citySelect.change(function (e, p) {
+                debugger
+                var id;
+                p ? id = p.cityid : id = $(this).val();
+                $.get("@NavigationUrls.Instance().GetAreas()", { cityid: id }, function (data) {
+                    if (data) {
+                        appendSelect($areaSelect, data, "areaid", "areaname");
+                        p?$areaSelect.val("@ViewData["areaid"]"):'';
+                    }
+                });
+
+            });
+        /*全局变量 2017-5-18 伍冠源*/
+           var  G_$userAddressForm = $("#userAddressForm"),
+                G_$dialog = $('#ajaxDialog');//编辑弹框
+
+         /*启用 2017-5-18 伍冠源*/
+        $('#jsEnable').click(function () {
+            if (!verify()) return false;
+
+            G_$userAddressForm.attr('action', '@NavigationUrls.Instance().EnableUserAddress(true)');
+            sweetAlert({
+                title: "您确定要启用用户吗?",
+                text: "",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                closeOnConfirm: false
+            }, function () {
+                //确定后回调函数
+                G_$userAddressForm.submit();
+                swal("加载中请稍后......","", "info");
+            });
+         });
+
+         //未启用 2017-5-18 伍冠源
+        $('#jsDisable').click(function () {
+            if (!verify()) return false;
+
+            G_$userAddressForm.attr('action','@NavigationUrls.Instance().EnableUserAddress(false)');
+            sweetAlert({
+                title: "您确定要取消用户启用吗?",
+                text: "",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                closeOnConfirm: false
+            }, function () {
+                //确定后回调函数
+                G_$userAddressForm.submit();
+                swal("加载中请稍后......", "", "info");
+            });
+        });
+
+        //详情 2017-5-18 伍冠源
+        $(".jsDetails").click(function (e) {
+            e.preventDefault;
+            var url = $(this).data("url");
+
+            $.get(url, function (html) {
+                G_$dialog.find('#dialog').removeClass().addClass("modal-dialog modal-lg").html(html);
+                G_$dialog.modal('show');
+            })
+        });
+
+        });//ready end
+    </script>
+}

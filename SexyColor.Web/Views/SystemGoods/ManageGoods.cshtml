@@ -1,0 +1,529 @@
+﻿@using Newtonsoft.Json
+@model PagingDataSet<GoodsInfo>
+@{
+    Layout = "~/Views/Shared/_SystemLayout.cshtml";
+    string message = "0";
+    StatusMessageData statusData = Html.ViewContext.HttpContext.Session.Get<StatusMessageData>("StatusMessageData", null);
+    if (statusData != null)
+    {
+        message = JsonConvert.SerializeObject(statusData);
+        Html.ViewContext.HttpContext.Session.Remove("StatusMessageData");
+    }
+    var rawUrl = RequestHelper.RawUrl(HttpContextCore.Current.Request);
+    GoodsInfoSortBy sort = ViewData.Get<GoodsInfoSortBy>("Sort", GoodsInfoSortBy.Keynum_DESC);
+    GoodsInfoStatus status = ViewData.Get<GoodsInfoStatus>("Status", GoodsInfoStatus.Sale);
+}
+@section Styles{
+    <link rel="stylesheet" href="/vendors/ztree/metroStyle/metroStyle.css" />
+    <link rel="stylesheet" href="~/css/rotation_imgAnddetails_img.css" />
+    <style>
+        .form_fixed .form-group .range_box .input_box_2 {
+            width: auto;
+        }
+
+        .form_fixed .form-group .range_box input {
+            width: 60px;
+        }
+
+        .table_img {
+            height: 100px;
+            width:100px;
+            /*width: auto;*/
+        }
+
+        .jambo_table .img_title {
+            height: 100%;
+            vertical-align: middle;
+        }
+
+        .category_li {
+        }
+    </style>
+}
+
+<div class="">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <ol class="breadcrumb">
+                        <li><a href="#">系统后台</a></li>
+                        <li><a href="#">商品模块</a></li>
+                        <li class="active">商品信息</li>
+                    </ol>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <ul class="nav nav-tabs">
+                        @if (status == GoodsInfoStatus.Sale)
+                        {
+                            <li role="presentation" class="active"><a href="@NavigationUrls.Instance().ManageGoods(GoodsInfoStatus.Sale)">销售中</a></li>
+                        }
+                        else
+                        {
+                            <li role="presentation"><a href="@NavigationUrls.Instance().ManageGoods(GoodsInfoStatus.Sale)">销售中</a></li>
+                        }
+                        @if (status == GoodsInfoStatus.Shelves)
+                        {
+                            <li role="presentation" class="active"><a href="@NavigationUrls.Instance().ManageGoods(GoodsInfoStatus.Shelves)">仓库中</a></li>
+                        }
+                        else
+                        {
+                            <li role="presentation"><a href="@NavigationUrls.Instance().ManageGoods(GoodsInfoStatus.Shelves)">仓库中</a></li>
+                        }
+                        @if (status == GoodsInfoStatus.MissStock)
+                        {
+                            <li role="presentation" class="active"><a href="@NavigationUrls.Instance().ManageGoods(GoodsInfoStatus.MissStock)">已售罄</a></li>
+                        }
+                        else
+                        {
+                            <li role="presentation"><a href="@NavigationUrls.Instance().ManageGoods(GoodsInfoStatus.MissStock)">已售罄</a></li>
+                        }
+                        @if (status == GoodsInfoStatus.RecycleBin)
+                        {
+                            <li role="presentation" class="active"><a href="@NavigationUrls.Instance().ManageGoods(GoodsInfoStatus.RecycleBin)">回收站</a></li>
+                        }
+                        else
+                        {
+                            <li role="presentation"><a href="@NavigationUrls.Instance().ManageGoods(GoodsInfoStatus.RecycleBin)">回收站</a></li>
+                        }
+                    </ul>
+                    <br />
+                    <div class="table-responsive">
+                        @using (Html.BeginForm("ManageGoods", "SystemGoods", FormMethod.Get, new { @Class = "form-horizontal form_fixed" }))
+                        {
+
+                            <div class="row">
+                                <div class="form-group">
+                                    <label class="control-label">商品编号</label>
+                                    <div class="input_box">
+                                        <input type="text" name="keynum" value="@ViewData["Keynum"]" class="form-control" placeholder="商品编号" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">商品名称</label>
+                                    <div class="input_box">
+                                        <input type="text" name="keyword" value="@ViewData["Keyword"]" class="form-control" placeholder="商品名称" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">价格区间</label>
+                                    <div class="input_box range_box">
+                                        <div class="input_box_2">
+                                            <input type="text" name="goodsPriceLowerLimit" value="@ViewData["GoodsPriceLowerLimit"]" class="form-control">
+
+                                        </div>
+                                        <div class="_separator">
+                                            -
+                                        </div>
+                                        <div class="input_box_2">
+                                            <input type="text" name="goodsPriceUpperLimit" value="@ViewData["GoodsPriceUpperLimit"]" class="form-control">
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">销量区间</label>
+                                    <div class="input_box range_box">
+                                        <div class="input_box_2">
+                                            <input type="text" name="buyCountLowerLimit" value="@ViewData["BuyCountLowerLimit"]" class="form-control">
+
+                                        </div>
+                                        <div class="_separator">
+                                            -
+                                        </div>
+                                        <div class="input_box_2">
+                                            <input type="text" name="buyCountUpperLimit" value="@ViewData["BuyCountUpperLimit"]" class="form-control">
+
+                                        </div>
+                                    </div>
+
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label"></label>
+                                    <div class="input_box">
+                                        <button type="submit" class="btn btn-success _submit">
+                                            <i class="fa fa-search"></i>
+                                            搜 索
+                                        </button>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="clearfix"></div>
+                            @Html.Hidden("status", ViewData.Get("Status", GoodsInfoStatus.Sale.ToString()))
+                            @Html.Hidden("sort", ViewData.Get("Sort", GoodsInfoSortBy.Keynum_DESC.ToString()))
+                        }
+
+                        <div class="x_content text-right">
+                            <a class="btn btn-info" href="@NavigationUrls.Instance().AddGoods()">发布商品</a>
+                            <button type="button" class="btn btn-info recycleGoods" data-url="@NavigationUrls.Instance().RecycleGoods()">回收商品</button>
+                        </div>
+                        @using (Html.BeginForm("", "", FormMethod.Post, new { id = "manageGoodsForm", @Class = "table_form" }))
+                        {
+                            @Html.Hidden("returnUrl", rawUrl)
+                            @if (Model.TotalRecords > 0)
+                            {
+                                <table class="table table-striped jambo_table bulk_action">
+                                    <thead>
+                                        <tr class="headings">
+                                            <th>
+                                                <input type="checkbox" class="allCheck flat">
+                                            </th>
+                                            <th class="column-title">商品名称</th>
+                                            <th class="column-title">
+                                                @if (sort == GoodsInfoSortBy.Price_ASC)
+                                                {
+                                                    <a class="order" href="@RequestHelper.ConnectUrl(HttpContextCore.Current.Request, "sort=", GoodsInfoSortBy.Price_DESC.ToString())">价格</a>
+                                                    <i class="order_icon fa fa-long-arrow-up"></i>
+                                                }
+                                                else if (sort == GoodsInfoSortBy.Price_DESC)
+                                                {
+
+                                                    <a class="order" href="@RequestHelper.ConnectUrl(HttpContextCore.Current.Request, "sort=", GoodsInfoSortBy.Price_ASC.ToString())">价格</a>
+                                                    <i class="order_icon fa fa-long-arrow-down"></i>
+                                                }
+                                                else
+                                                {
+                                                    <a class="order" href="@RequestHelper.ConnectUrl(HttpContextCore.Current.Request, "sort=", GoodsInfoSortBy.Price_ASC.ToString())">价格</a>
+                                                }
+                                            </th>
+                                            <th class="column-title">
+                                                总库存
+                                            </th>
+                                            <th class="column-title">
+                                                @if (sort == GoodsInfoSortBy.BuyCount_ASC)
+                                                {
+                                                    <a class="order" href="@RequestHelper.ConnectUrl(HttpContextCore.Current.Request, "sort=", GoodsInfoSortBy.BuyCount_DESC.ToString())">总销量</a>
+                                                    <i class="order_icon fa fa-long-arrow-up"></i>
+                                                }
+                                                else if (sort == GoodsInfoSortBy.BuyCount_DESC)
+                                                {
+                                                    <a class="order" href="@RequestHelper.ConnectUrl(HttpContextCore.Current.Request, "sort=", GoodsInfoSortBy.BuyCount_ASC.ToString())">总销量</a>
+                                                    <i class="order_icon fa fa-long-arrow-down"></i>
+                                                }
+                                                else
+                                                {
+                                                    <a class="order" href="@RequestHelper.ConnectUrl(HttpContextCore.Current.Request, "sort=", GoodsInfoSortBy.BuyCount_ASC.ToString())">总销量</a>
+                                                }
+                                            </th>
+                                            <th class="column-title">
+                                                @if (sort == GoodsInfoSortBy.DateCreated_ASC)
+                                                {
+                                                    <a class="order" href="@RequestHelper.ConnectUrl(HttpContextCore.Current.Request, "sort=", GoodsInfoSortBy.DateCreated_DESC.ToString())">创建时间</a>
+                                                    <i class="order_icon fa fa-long-arrow-up"></i>
+                                                }
+                                                else if (sort == GoodsInfoSortBy.DateCreated_DESC)
+                                                {
+                                                    <a class="order" href="@RequestHelper.ConnectUrl(HttpContextCore.Current.Request, "sort=", GoodsInfoSortBy.DateCreated_ASC.ToString())">创建时间</a>
+                                                    <i class="order_icon fa fa-long-arrow-down"></i>
+                                                }
+                                                else
+                                                {
+                                                    <a class="order" href="@RequestHelper.ConnectUrl(HttpContextCore.Current.Request, "sort=", GoodsInfoSortBy.DateCreated_ASC.ToString())">创建时间</a>
+                                                }
+                                            </th>
+                                            <th class="column-title">
+                                                @if (sort == GoodsInfoSortBy.DisplayOrder_ASC)
+                                                {
+                                                    <a class="order" href="@RequestHelper.ConnectUrl(HttpContextCore.Current.Request, "sort=", GoodsInfoSortBy.DisplayOrder_DESC.ToString())">排序号</a>
+                                                    <i class="order_icon fa fa-long-arrow-up"></i>
+                                                }
+                                                else if (sort == GoodsInfoSortBy.DisplayOrder_DESC)
+                                                {
+                                                    <a class="order" href="@RequestHelper.ConnectUrl(HttpContextCore.Current.Request, "sort=", GoodsInfoSortBy.DisplayOrder_ASC.ToString())">排序号</a>
+                                                    <i class="order_icon fa fa-long-arrow-down"></i>
+                                                }
+                                                else
+                                                {
+                                                    <a class="order" href="@RequestHelper.ConnectUrl(HttpContextCore.Current.Request, "sort=", GoodsInfoSortBy.DisplayOrder_ASC.ToString())">排序号</a>
+                                                }
+                                            </th>
+                                            <th class="column-title no-link last">
+                                                <span class="nobr">查看</span>
+                                            </th>
+                                            <th class="column-title no-link last">
+                                                <span class="nobr">设置</span>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    @if (Model != null && Model.TotalRecords > 0)
+                                    {
+                                        foreach (GoodsInfo info in Model)
+                                        {
+
+                                            <tr></tr>
+                                            <tr class="pointer">
+                                                <td>
+                                                    <label>
+                                                        @Html.CustomCheckBox("customCheck", info.Goodsid, false, new { @class = "flat" })
+                                                    </label>
+                                                </td>
+                                                <td>
+                                                    <img class="table_img" src="@info.ImageUrl"/>
+                                                    <div class="img_title inline-block">
+                                                        @(info.GoodsName)
+                                                    </div>
+                                                </td>
+                                                <td>
+                                                    市场价¥@(info.GoodsPrice)<br>
+                                                    规格价¥@(info.GoodsRealPrice)
+                                                </td>
+                                                <td>
+                                                    @(info.Stock)
+                                                    @if (info.Status == (int)GoodsInfoStatus.Sale)
+                                                    {
+                                                        <button type="button" class="btn show btn-xs btn-info downShelvesGoods" data-backdrop="static" data-url="@NavigationUrls.Instance().DownShelvesGoods(info.Goodsid)">下架</button>
+                                                    }
+                                                    @if (info.Status == (int)GoodsInfoStatus.Shelves || info.Status == (int)GoodsInfoStatus.MissStock)
+                                                    {
+                                                        <button type="button" class="btn show btn-xs btn-info upShelvesGoods" data-backdrop="static" data-url="@NavigationUrls.Instance().UpShelvesGoods(info.Goodsid)">上架</button>
+                                                    }
+                                                </td>
+                                                <td>@(info.BuyCount)</td>
+                                                <td>@(info.DateCreated.ToDateString(true))</td>
+                                                <td>@(info.DisplayOrder)</td>
+                                                <td class="last">
+                                                    @if (info.Status == (int)GoodsInfoStatus.RecycleBin)
+                                                    {
+                                                        <button type="button" class="btn show btn-xs btn-info recoveryGoods" data-backdrop="static" data-url="@NavigationUrls.Instance().RecoveryGoods(info.Goodsid)">恢复商品</button>
+                                                    }
+                                                    else
+                                                    {
+                                                        <button type="button" class="btn show btn-xs btn-info goodsInfoDetails" data-backdrop="static" data-url="@NavigationUrls.Instance().DetailsGoodsInfo(info.Goodsid)">查看详情</button>
+                                                        <button type="button" class="btn show btn-xs btn-info commentsOperation" data-backdrop="static" data-url="@NavigationUrls.Instance().CommentsGoodsInfo(info.Goodsid)">查看评论</button>
+                                                    }
+                                                </td>
+                                                <td class="last">
+                                                    @if (info.Status == (int)GoodsInfoStatus.Shelves || info.Status == (int)GoodsInfoStatus.MissStock)
+                                                    {
+                                                        <button type="button" class="btn show btn-xs btn-info setGoodsInfo" data-backdrop="static" data-url="@NavigationUrls.Instance().SetGoodsInfo(info.Goodsid)">基本信息设置</button>
+                                                        <button type="button" class="btn show btn-xs btn-info setGoodsSku" data-backdrop="static" data-url="@NavigationUrls.Instance().SetGoodsSkuInfo(info.Goodsid)">商品属性设置</button>
+                                                        <button type="button" class="btn show btn-xs btn-info goodsRotationOperation" data-backdrop="static" data-url="@NavigationUrls.Instance().SetGoodsRotationImage(info.Goodsid)">商品轮换图设置</button>
+                                                        <button type="button" class="btn show btn-xs btn-info goodsdetailsImgOperation" data-backdrop="static" data-url="@NavigationUrls.Instance().SetGoodsDetailImage(info.Goodsid)">商品详情图设置</button>
+                                                    }
+                                                </td>
+                                            </tr>
+
+                                        }
+                                    }
+                                </table>
+                                <div>
+                                    @Html.PagingResults(Model)
+                                    @Html.PagingButton(Model)
+                                    <div class="clearfix"></div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="text-center">
+                                    搜索不到数据
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- modal 弹框模板-->
+<div class="modal fade" id="ajaxDialog" tabindex="-1" role="dialog" aria-labelledby="modalLabel" data-backdrop="static">
+    <div id="dialog" class="modal-dialog modal-md" role="document">
+    </div>
+</div>
+
+
+@section Scripts{
+    <script src="/vendors/ztree/jquery.ztree.core.min.js"></script>
+    <script>
+
+        (function () {
+            var data = @Html.Raw(message);
+            if (data) {
+                if (data.messageType == 1) {
+                    swal({
+                        title: '操作成功！',
+                        timer: 1500,
+                        showConfirmButton: false,
+                        type: 'success'
+                    });
+                } else {
+                    swal({
+                        title: '操作失败！',
+                        timer: 1500,
+                        showConfirmButton: false,
+                        type: 'error'
+                    });
+                }
+            }
+        })();
+
+        //ajax加载页面
+        function loadHtml(_this) {
+            var url = $(_this).data("url");
+            $('#dialog').load(url, function (response, status, xhr) {
+                $(this).removeClass().addClass("modal-dialog modal-lgg");
+                $('#ajaxDialog').modal('show');
+            })
+        }
+
+        //商品轮换图片、商品详情图加载html
+        function loadGoodsImgEditHTml(_this) {
+            var url = $(_this).data("url");
+            $('#dialog').load(url, function (response, status, xhr) {
+                $(this).removeClass().addClass("modal-dialog modal-lg");
+                $('#ajaxDialog').data("operation", $(_this)).modal('show');
+            });
+        }
+        //商品详情
+        $(".goodsInfoDetails").click(function () {
+            loadHtml(this);
+        });
+       
+        //商品轮换图
+        $(".goodsRotationOperation").click(function () {
+            loadGoodsImgEditHTml(this);
+        });
+
+        //商品图片详情
+        $(".goodsdetailsImgOperation").click(function () {
+            loadGoodsImgEditHTml(this);
+        });
+
+        //查看评论
+        $(".commentsOperation").click(function () {
+            AjaxUtility.loadPartialPageModal(this,"modal-lg");
+        });
+
+        function verify() {
+            if ($("input[name='customCheck']:checked").length <= 0) {
+                swal({
+                    title: '至少选择一件商品！',
+                    timer: 1500,
+                    showConfirmButton: false,
+                    type: 'error'
+                });
+                return false;
+            } return true;
+        }
+
+        $('.allCheck').on('ifClicked', function (event) {
+            var items = document.getElementsByName('customCheck');
+            for (var i = 0; i < items.length; i++) {
+                if (items[i].type == 'checkbox') {
+                    if (this.checked)
+                        $(items[i]).iCheck('uncheck');
+                    else {
+                        $(items[i]).iCheck('check');
+                    }
+                }
+            }
+        });
+
+        $(".recycleGoods").click(function () {
+            if (!verify()) {
+                return false;
+            }
+            var url = $(this).data("url");
+            sweetAlert({
+                title: "您确定要回收商品吗?",
+                text: "",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                closeOnConfirm: false
+            }, function () {
+                //确定后回调函数
+                $('#manageGoodsForm').attr('action', url);
+                $('#manageGoodsForm').submit();
+            });
+        });
+
+        $(".recoveryGoods").click(function () {
+            var url = $(this).data("url");
+            $.post(url, function (data) {
+                if (data.messageType == 1) {
+                    swal({
+                        title: data.messageContent,
+                        timer: 1500,
+                        showConfirmButton: false,
+                        type: 'success'
+                    });
+                    location.reload();
+                } else {
+                    swal({
+                        title: data.messageContent,
+                        timer: 1500,
+                        showConfirmButton: false,
+                        type: 'error'
+                    });
+                }
+            })
+        });
+
+        $(".downShelvesGoods").click(function () {
+            var url = $(this).data("url");
+            $.post(url, function (data) {
+                if (data.messageType == 1) {
+                    swal({
+                        title: data.messageContent,
+                        timer: 1500,
+                        showConfirmButton: false,
+                        type: 'success'
+                    });
+                    location.reload();
+                } else {
+                    swal({
+                        title: data.messageContent,
+                        timer: 1500,
+                        showConfirmButton: false,
+                        type: 'error'
+                    });
+                }
+            })
+        });
+
+        $(".upShelvesGoods").click(function () {
+            var url = $(this).data("url");
+            $.post(url, function (data) {
+                if (data.messageType == 1) {
+                    swal({
+                        title: data.messageContent,
+                        timer: 1500,
+                        showConfirmButton: false,
+                        type: 'success'
+                    });
+                    location.reload();
+                } else {
+                    swal({
+                        title: data.messageContent,
+                        timer: 1500,
+                        showConfirmButton: false,
+                        type: 'error'
+                    });
+                }
+            })
+        });
+
+        $(".setGoodsInfo").click(function () {
+            var url = $(this).data("url");
+            $.get(url, function (html) {
+                $("#dialog").removeClass().addClass("modal-dialog modal-lg").html(html);
+                $('#ajaxDialog').modal('show');
+            })
+        });
+
+        $(".setGoodsSku").click(function () {
+            var url = $(this).data("url");
+            $.get(url, function (html) {
+                $("#dialog").removeClass().addClass("modal-dialog modal-lgg").html(html);
+                $('#ajaxDialog').modal('show');
+            })
+        });
+
+
+    </script>
+}

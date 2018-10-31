@@ -1,0 +1,55 @@
+﻿@model CategoryLevelModel
+@{
+    Layout = null;
+}
+<style>
+    textarea {
+        margin: 0px -9.25px 0px 0px;
+        width: 370px;
+        height: 120px;
+    }
+    .show_img{
+        height:70px;
+        width:auto;
+    }
+
+</style>
+<div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <h4 class="modal-title">商品分类详情</h4>
+        </div>
+        <div class="modal-body">
+            <form id="myForm" class="form-horizontal center-block" style="width:75%;">
+
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-xs-3 control-label">名称：</label>
+                    <div class="col-xs-4">
+                        @Html.TextBoxFor(w => w.CategoryName, new { @class= "form-control", @readonly= "readonly" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-xs-3 control-label">描述：</label>
+                    <div class="col-xs-7">
+                        @Html.TextAreaFor(w => w.Description, new { @class = "form-control", @readonly = "readonly" })
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-xs-3 control-label">图片：</label>
+                    <div class="col-xs-4">
+                        @if (Model.ImageUrl.IsNotNullAndWhiteSpace())
+                        {
+                            <img class="show_img" src="@Model.ImageUrl" />
+                        }
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            </form>
+            <div class="clearfix"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
+            </div>
+        </div>
+    </div>
+</div>

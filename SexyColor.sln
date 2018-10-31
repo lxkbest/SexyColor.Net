@@ -1,0 +1,94 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.26430.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SexyColor.Infrastructure", "SexyColor.Infrastructure\SexyColor.Infrastructure.csproj", "{0119CC7A-D9A5-4E4E-895D-DBC72B75160D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SexyColor.CommonComponents", "SexyColor.CommonComponents\SexyColor.CommonComponents.csproj", "{1C08EA8F-1484-42F5-84FA-7F3A9BD8F8F2}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SexyColor.BusinessComponents", "SexyColor.BusinessComponents\SexyColor.BusinessComponents.csproj", "{73B2E5B1-2768-4CFD-935C-D765447B133E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SexyColor.Web", "SexyColor.Web\SexyColor.Web.csproj", "{3BEA8CCF-6D91-4853-A197-CE0ABD0D89C5}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeSmith.Entity", "CodeSmith.Entity\CodeSmith.Entity.csproj", "{3625BE10-FAA3-4BBF-8A53-A3A46CDD2FE7}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Mtemplate.T4", "Mtemplate.T4\Mtemplate.T4.csproj", "{B0EB8DA1-DB2B-4434-820D-986C4B371FFA}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SexyColor.ConsoleTest", "SexyColor.Console\SexyColor.ConsoleTest.csproj", "{6913A313-2AC7-4597-AB0B-5BF564C3D6A3}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SexyColor.Api", "SexyColor.Api\SexyColor.Api.csproj", "{9CDA9ACC-867F-4C39-A261-7D98D7B2B4EF}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0119CC7A-D9A5-4E4E-895D-DBC72B75160D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0119CC7A-D9A5-4E4E-895D-DBC72B75160D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0119CC7A-D9A5-4E4E-895D-DBC72B75160D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0119CC7A-D9A5-4E4E-895D-DBC72B75160D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C08EA8F-1484-42F5-84FA-7F3A9BD8F8F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1C08EA8F-1484-42F5-84FA-7F3A9BD8F8F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1C08EA8F-1484-42F5-84FA-7F3A9BD8F8F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1C08EA8F-1484-42F5-84FA-7F3A9BD8F8F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73B2E5B1-2768-4CFD-935C-D765447B133E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73B2E5B1-2768-4CFD-935C-D765447B133E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73B2E5B1-2768-4CFD-935C-D765447B133E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73B2E5B1-2768-4CFD-935C-D765447B133E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3BEA8CCF-6D91-4853-A197-CE0ABD0D89C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BEA8CCF-6D91-4853-A197-CE0ABD0D89C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BEA8CCF-6D91-4853-A197-CE0ABD0D89C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BEA8CCF-6D91-4853-A197-CE0ABD0D89C5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3625BE10-FAA3-4BBF-8A53-A3A46CDD2FE7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3625BE10-FAA3-4BBF-8A53-A3A46CDD2FE7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3625BE10-FAA3-4BBF-8A53-A3A46CDD2FE7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3625BE10-FAA3-4BBF-8A53-A3A46CDD2FE7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0EB8DA1-DB2B-4434-820D-986C4B371FFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0EB8DA1-DB2B-4434-820D-986C4B371FFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0EB8DA1-DB2B-4434-820D-986C4B371FFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0EB8DA1-DB2B-4434-820D-986C4B371FFA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6913A313-2AC7-4597-AB0B-5BF564C3D6A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6913A313-2AC7-4597-AB0B-5BF564C3D6A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6913A313-2AC7-4597-AB0B-5BF564C3D6A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6913A313-2AC7-4597-AB0B-5BF564C3D6A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9CDA9ACC-867F-4C39-A261-7D98D7B2B4EF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CDA9ACC-867F-4C39-A261-7D98D7B2B4EF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CDA9ACC-867F-4C39-A261-7D98D7B2B4EF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CDA9ACC-867F-4C39-A261-7D98D7B2B4EF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 9
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://lxkbest.visualstudio.com/
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = CodeSmith.Entity\\CodeSmith.Entity.csproj
+		SccProjectName1 = CodeSmith.Entity
+		SccLocalPath1 = CodeSmith.Entity
+		SccProjectUniqueName2 = Mtemplate.T4\\Mtemplate.T4.csproj
+		SccProjectName2 = Mtemplate.T4
+		SccLocalPath2 = Mtemplate.T4
+		SccProjectUniqueName3 = SexyColor.BusinessComponents\\SexyColor.BusinessComponents.csproj
+		SccProjectName3 = SexyColor.BusinessComponents
+		SccLocalPath3 = SexyColor.BusinessComponents
+		SccProjectUniqueName4 = SexyColor.CommonComponents\\SexyColor.CommonComponents.csproj
+		SccProjectName4 = SexyColor.CommonComponents
+		SccLocalPath4 = SexyColor.CommonComponents
+		SccProjectUniqueName5 = SexyColor.Infrastructure\\SexyColor.Infrastructure.csproj
+		SccProjectName5 = SexyColor.Infrastructure
+		SccLocalPath5 = SexyColor.Infrastructure
+		SccProjectUniqueName6 = SexyColor.Web\\SexyColor.Web.csproj
+		SccProjectName6 = SexyColor.Web
+		SccLocalPath6 = SexyColor.Web
+		SccProjectUniqueName7 = SexyColor.Console\\SexyColor.ConsoleTest.csproj
+		SccProjectName7 = SexyColor.Console
+		SccLocalPath7 = SexyColor.Console
+		SccProjectUniqueName8 = SexyColor.Api\\SexyColor.Api.csproj
+		SccProjectName8 = SexyColor.Api
+		SccLocalPath8 = SexyColor.Api
+	EndGlobalSection
+EndGlobal

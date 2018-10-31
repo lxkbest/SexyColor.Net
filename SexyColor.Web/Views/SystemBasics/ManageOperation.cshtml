@@ -1,0 +1,176 @@
+﻿@model PagingDataSet<OperationLogs>
+@{
+    Layout = "~/Views/Shared/_SystemLayout.cshtml";
+    var rawUrl = RequestHelper.RawUrl(HttpContextCore.Current.Request);
+}
+
+<div class="">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <ol class="breadcrumb">
+                        <li><a href="#">系统后台</a></li>
+                        <li><a href="#">基础模块</a></li>
+                        <li class="active">操作日志</li>
+                    </ol>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <div class="table-responsive">
+                        @using (Html.BeginForm("ManageOperation", "SystemBasics", FormMethod.Get, new { @Class = "form-horizontal form_fixed" }))
+                        {
+                            <div class="row">
+                                <div class="form-group">
+                                    <label class="control-label">功能名称</label>
+                                    <div class="input_box">
+                                        <input type="text" name="name" value="@ViewData["OperationName"]" class="form-control" placeholder="操作功能名称" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">用户名称</label>
+                                    <div class="input_box">
+                                        <input type="text" name="username" value="@ViewData["Username"]" class="form-control" placeholder="用户名称" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">操作类型</label>
+                                    <div class="input_box">
+                                        @Html.DropDownList("type", ViewData["OperationType"] as IEnumerable<SelectListItem>, "全部", new { @Class = "form-control" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">操作时间</label>
+                                    <div class="input_box range_box">
+                                        <div class="input_box_2">
+                                            <div class="input-group date" id="datetimepicker1">
+                                                <input type="text" name="timeLowerLimit" value="@ViewData["TimeLowerLimit"]" class="form-control" placeholder="开始时间">
+                                                <div class="input-group-addon">
+                                                    <i class="glyphicon glyphicon-calendar"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="_separator">
+                                            -
+                                        </div>
+                                        <div class="input_box_2">
+                                            <div class="input-group date" id="datetimepicker2">
+                                                <input type="text" name="timeUpperLimit" value="@ViewData["TimeUpperLimit"]" class="form-control" placeholder="结束时间">
+                                                <div class="input-group-addon">
+                                                    <i class="glyphicon glyphicon-calendar"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label"></label>
+                                    <div class="input_box">
+                                        <button type="submit" class="btn btn-success _submit">
+                                            <i class="fa fa-search"></i>
+                                            搜 索
+                                        </button>
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="clearfix"></div>
+                        }
+                        @using (Html.BeginForm("", "", FormMethod.Post, new { id = "manageUsersForm", @Class = "table_form" }))
+                        {
+
+                            @Html.Hidden("returnUrl", rawUrl)
+                            @if (Model.TotalRecords > 0)
+                            {
+                                <table class="table table-striped jambo_table bulk_action">
+                                    <thead>
+                                        <tr class="headings">
+                                            <th class="column-title">所属应用</th>
+                                            <th class="column-title">来源</th>
+                                            <th class="column-title">操作类型</th>
+                                            <th class="column-title">操作对象名称</th>
+                                            <th class="column-title">操作者名称</th>
+                                            <th class="column-title">Ip</th>
+                                            <th class="column-title">Url</th>
+                                            <th class="column-title">创建时间</th>
+                                            <th class="column-title no-link last">
+                                                <span class="nobr">操作</span>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    @if (Model != null && Model.TotalRecords > 0)
+                                    {
+                                        foreach (OperationLogs logs in Model)
+                                        {
+
+                                            <tr></tr>
+                                            <tr class="pointer">
+                                                <td>@Utility.GetDictionaryByEnumMemberInfo(typeof(ApplicationidEnum)).Get(logs.ApplicationId, "未知应用")</td>
+                                                <td>@(logs.Source)</td>
+                                                <td>@(logs.OperationType == PermissionItemsType.LeftMenu.ToString() ? "左侧菜单" : "普通按钮")</td>
+                                                <td>@(logs.OperationObjectName)</td>
+                                                <td>@(logs.OperatorUsername)</td>
+                                                <td>@(logs.OperatorIp)</td>
+                                                <td>@Utility.GetSubString(logs.OperatorUrl, 0, 70, "...")</td>
+                                                <td>@(logs.DateCreated.ToDisplayString())</td>
+                                                <td class="last">
+                                                    <button type="button" class="btn show btn-xs btn-info detailsOperation" data-toggle="modal" data-backdrop="static" data-url="@NavigationUrls.Instance().DetailsOperation(logs.Id)">详情</button>
+                                                </td>
+
+                                            </tr>
+
+                                        }
+                                    }
+                                </table>
+                                <div>
+                                    @Html.PagingResults(Model)
+                                    @Html.PagingButton(Model)
+                                    <div class="clearfix"></div>
+                                </div>
+                            }
+                            else
+                            {
+                                <div class="text-center">
+                                    搜索不到数据
+                                </div>
+                            }
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- modal 弹框模板-->
+<div class="modal fade" id="ajaxDialog" tabindex="-1" role="dialog" aria-labelledby="modalLabel" data-backdrop="static">
+    <div id="dialog" class="modal-dialog modal-md" role="document">
+    </div>
+</div>
+
+
+@section Scripts{
+<script>
+    $(function () {
+            var picker1 = $('#datetimepicker1').datetimepicker({
+                format: 'YYYY-MM-DD',
+                locale: moment.locale('zh-cn'),
+                maxDate: moment().add(1, 'days').format("YYYY-MM-DD")
+            });
+
+            var picker2 = $('#datetimepicker2').datetimepicker({
+                format: 'YYYY-MM-DD',
+                locale: moment.locale('zh-cn'),
+                maxDate: moment().add(1, 'days').format("YYYY-MM-DD")
+            });
+    });
+
+    $(".detailsOperation").click(function () {
+        var url = $(this).data("url");
+        $.get(url, function (html) {
+            $("#dialog").removeClass().addClass("modal-dialog modal-lg").html(html);
+            $('#ajaxDialog').modal('show');
+        })
+    });
+</script>
+}

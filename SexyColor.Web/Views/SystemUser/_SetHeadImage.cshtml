@@ -1,0 +1,259 @@
+﻿@model User
+@{
+    Layout = null;
+}
+<style>
+    .targetImg {
+        width: auto !important;
+        height: 100% !important;
+        margin: auto;
+        display: block;
+    }
+
+    .jcrop-active {
+        margin: auto;
+        height: 100% !important;
+    }
+
+        .jcrop-active canvas {
+            width: auto !important;
+            height: 100% !important;
+            display: block !important;
+            margin: auto !important;
+        }
+</style>
+<div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <h4 class="modal-title">设置用户头像</h4>
+        </div>
+        <div class="modal-body head_img_box">
+            <div class="all_box">
+                <div class="left_box">
+                    <div class="img_box" id="imgBox">
+
+                    </div>
+                    <a id="chooseImgBtn" class="btn btn-sm btn-success choose_btn chooseImgBtn">选择图片</a>
+                </div>
+                <div class="right_box">
+                    <div class="preview W_tc">
+                        <p class="tit">
+                            预览
+                        </p>
+                        <div class="avatar avatar_100">
+                            <p id="pimg100" class="pic_wrap">
+                                <img src="@Model.HeadImg" />
+                            </p>
+                            <span class="S_txt2">100px x 100px</span>
+                        </div>
+                        <div class="avatar avatar_50">
+                            <p id="pimg50" class="pic_wrap">
+                                <img src="@Model.HeadImg" />
+                            </p>
+                            <span class="S_txt2">50px x 50px</span>
+                        </div>
+                        <div class="avatar avatar_30">
+                            <p id="pimg30" class="pic_wrap">
+                                <img src="@Model.HeadImg" />
+                            </p>
+                            <span class="S_txt2">30px x 30px</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="bottom_box">
+                    <a id="reUploadBtn" class="btn btn-sm btn-success chooseImgBtn" style="display:none;">重新上传</a>
+                    <button id="submitBtn" class="btn btn-sm btn-success" style="display:none;">确定提交</button>
+                    @*<button id="submitBtn" type="submit" form="headImageForm" class="btn btn-sm btn-success" style="display:none;">确定提交</button>*@
+                    <form id="headImageForm" enctype="multipart/form-data" method="post" asp-action="SaveHeadImage" asp-controller="SystemUser">
+                        <input id="imgInput" asp-for="@Model.HeadImg" type="file" style="display:none;" mulpitle>
+                        <input asp-for="@Model.UserId" hidden="hidden">
+                        <label>X1 <input type="text" class="input" size="6" id="x1" name="x1" /></label>
+                        <label>Y1 <input type="text" class="input" size="6" id="y1" name="y1" /></label>
+                        <label>X2 <input type="text" class="input" size="6" id="x2" name="x2" /></label>
+                        <label>Y2 <input type="text" class="input" size="6" id="y2" name="y2" /></label>
+                        <label>W <input type="text" class="input" size="6" id="w" name="w" /></label>
+                        <label>H <input type="text" class="input" size="6" id="h" name="h" /></label>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    /**
+*图片上传预览
+*/
+    function imagePreview(input, preview) {
+        var files = input.files;
+        // 假设 "preview" 是将要展示图片的 div
+        for (var i = 0; i < files.length; i++) {//预览新添加的图片
+            var file = files[i];
+            var imageType = /^image\//;
+            if (!imageType.test(file.type)) {
+                swal("请选择图片类型文件上传！","","error");
+            } else if ((file.size/1024/1024)>2){
+                swal("请选择小于2M的图片！", "", "error");
+            } else {
+                var img = document.createElement("img");
+                img.classList.add("targetImg");
+                img.file = file;
+                preview.appendChild(img);
+                var reader = new FileReader();
+                reader.onload = (function (aImg) {
+                    return function (e) {
+                        aImg.src = e.target.result;
+                        $pimg100.attr("src", e.target.result);
+                        $pimg50.attr("src", e.target.result);
+                        $pimg30.attr("src", e.target.result);
+                    };
+                })(img);
+                reader.readAsDataURL(file);
+            }
+
+        }
+    }
+
+    /*全局变量*/
+    var jcrop_api,
+        $chooseBtn = $("#chooseImgBtn"),
+        $imgInput = $("#imgInput"),
+        $chooseBtns = $(".chooseImgBtn"),
+        $submitBtn = $("#submitBtn"),
+        $reUploadBtn = $("#reUploadBtn"),
+        $pcnt1 = $('#pimg100'),
+        $pimg100 = $pcnt1.children("img"),
+        $pcnt2 = $('#pimg50'),
+        $pimg50 = $pcnt2.children("img"),
+        $pcnt3 = $('#pimg30'),
+        $pimg30 = $pcnt3.children("img");
+
+    var xsize1 = $pcnt1.width(),
+        ysize1 = $pcnt1.height(),
+        xsize2 = $pcnt2.width(),
+        ysize2 = $pcnt2.height(),
+        xsize3 = $pcnt3.width(),
+        ysize3 = $pcnt3.height(),
+        boundx,
+        boundy;
+
+
+    $imgInput.change(function () {
+        var box = $("#imgBox");
+        box.empty();
+        imagePreview(this, box[0]);
+        initJcrop();
+        // $pimg100.src = $(".targetImg").attr("src");
+    });
+    function clearCoords() {
+        $('#headImageForm input').val('');
+    };
+    function showCoords(c) {
+
+        $('#x1').val(c.x);
+        $('#y1').val(c.y);
+        $('#x2').val(c.x2);
+        $('#y2').val(c.y2);
+        $('#w').val(c.w);
+        $('#h').val(c.h);
+        updatePreview(c);
+    };
+    /*初始化jcrop*/
+    function initJcrop() {
+        $(".targetImg").Jcrop({
+            trackDocument: false,
+            //setSelect: [0, 0, 150, 150],
+            onChange: showCoords,
+            onSelect: showCoords,
+            onRelease: clearCoords,
+            aspectRatio:1
+        }, function () {
+            jcrop_api = this;
+            var width = this.container.find("canvas").width();
+            var height = this.container.find("canvas").height();
+            this.container.css("width", width);
+            boundx = width;
+            boundy = height;
+            $chooseBtn.hide();
+            $submitBtn.show();
+            $reUploadBtn.show();
+            jcrop_api.setOptions({ setSelect:[0, 0, 150, 150]});
+        });
+    }
+
+    /*动态预览*/
+    function updatePreview(c) {
+        if (parseInt(c.w) > 0) {
+            previewCute(c, $pimg100, xsize1, ysize1);
+            previewCute(c, $pimg50, xsize2, ysize2);
+            previewCute(c, $pimg30, xsize3, ysize3);
+        }
+    };
+
+    function previewCute(c,img,xsize,ysize) {
+        var rx = xsize / c.w;//预览图片容器宽度/选框的宽
+        var ry = ysize / c.h;
+
+        img.css({
+            //图片尺寸x
+            width: Math.round(rx * boundx) + 'px',
+            height: Math.round(ry * boundy) + 'px',
+            //选框偏移量
+            marginLeft: '-' + Math.round(rx * c.x) + 'px',
+            marginTop: '-' + Math.round(ry * c.y) + 'px'
+        });
+
+    }
+
+    $chooseBtns.click(function () {
+        $imgInput.click();
+    });
+
+    $submitBtn.click(function () {
+
+        var fileUpload = $("#imgInput").get(0);
+        var files = fileUpload.files;
+        var dataForm = new FormData($("#headImageForm")[0]);
+        //for (var i = 0; i < files.length; i++) {
+        //    dataForm.append(files[i].name, files[i]);
+        //}
+        $.ajax({
+            type: "post",
+            url: "@NavigationUrls.Instance().SaveHeadImage()",
+            data: dataForm,
+            processData: false,
+            contentType: false,
+            success: function(data){
+                if (data.messageType == 1) {
+                    swal({
+                        title: '上传成功！',
+                        timer: 1500,
+                        showConfirmButton: false,
+                        type: 'success'
+                    });
+                    location.reload();
+                } else {
+                    swal({
+                        title: data.messageContent,
+                        timer: 1500,
+                        showConfirmButton: false,
+                        type: 'error'
+                    });
+                }
+            },
+            error: function (data) {
+                swal({
+                    title: '未知错误！',
+                    timer: 1500,
+                    showConfirmButton: false,
+                    type: 'error'
+                });
+            }
+        });
+
+    })
+</script>
+
+
+

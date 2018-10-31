@@ -1,0 +1,66 @@
+﻿@model PagingDataSet<OrderStatusLogs>
+@{
+    Layout = null;
+}
+
+<div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <h4 class="modal-title">订单状态变更记录</h4>
+        </div>
+        <div class="jsFansTable modal-body table_form">
+
+            @if (Model.TotalRecords > 0)
+            {
+                <table class="table table-striped jambo_table bulk_action">
+                    <thead>
+                        <tr class="headings">
+                            <th class="column-title">订单号</th>
+                            <th class="column-title">操作人</th>
+                            <th class="column-title">状态</th>
+                            <th class="column-title">状态说明</th>
+                            <th class="column-title">操作记录</th>
+                            <th class="column-title">变更时间</th>
+                        </tr>
+                    </thead>
+                    @if (Model != null && Model.TotalRecords > 0)
+                    {
+                        IUserService userService = DIContainer.Resolve<IUserService>();
+                        foreach (OrderStatusLogs statusLogs in Model)
+                        {
+                            <tr></tr>
+                            <tr class="pointer">
+                                <td>@(statusLogs.OrderNumber)</td>
+                                <td>@(statusLogs.Username)</td>
+                                <td>@Utility.GetDisplayByEnumMemberInfo(typeof(OrderModifyStatus), Enum.Parse(typeof(OrderModifyStatus), statusLogs.Status.ToString()))</td>
+                                <td>@(statusLogs.StatusName)</td>
+                                <td>@(statusLogs.Operation)</td>
+                                <td>@(statusLogs.DateCreated.ToDateString(true))</td>
+                            </tr>
+
+                        }
+                    }
+                </table>
+                <div>
+                    @Html.PagingResults(Model)
+                    @Html.PagingButton(Model)
+                    <div class="clearfix"></div>
+                </div>
+            }
+            else
+            {
+                <div class="text-center">
+                    搜索不到数据
+                </div>
+            }
+
+
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
+        </div>
+
+    </div>
+</div>

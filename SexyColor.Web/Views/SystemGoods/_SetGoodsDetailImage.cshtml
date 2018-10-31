@@ -1,0 +1,92 @@
+﻿@model IEnumerable<GoodsInDetailImage>
+@{
+    Layout = null;
+}
+@section Styles{
+    <link href="~/css/rotation_imgAnddetails_img.css" rel="stylesheet" />
+}
+<div id="createDialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <h4 class="modal-title" id="exampleModalLabel">编辑商品详情图</h4>
+        </div>
+        <div class="modal-body">
+
+            <div class="add_img_box">
+                @if (Model != null && Model.Count() > 0)
+                {
+                    foreach (GoodsInDetailImage imgModel in Model)
+                    {
+                        <div class="inline-block jsImgprevBox img_prev_box">
+                            <img src="@imgModel.GoodsDetaiImage" onerror="this.src='/images/img_error.png'"/>
+                            <div class="_close _number bg-danger">@imgModel.Number</div>
+                            <div data-id="@imgModel.Id" data-number="@imgModel.Number" title="编辑" class="fa fa-edit text-danger _close _edit jsEdit"></div>
+                            <div data-id="@imgModel.Id" data-url="@NavigationUrls.Instance().DeleteGoodsInDetailImage(imgModel.Id)" title="删除" class="jsDeleteEditImg fa fa-close text-danger _close"></div>
+                        </div>
+                    }
+                }
+            </div>
+            <!--编辑图片-->
+            <div id="jsEditImgBox" style="display:none;">
+                <h4>编辑图片</h4>
+                <div class="edit_img_left">
+                    <img id="jsEditImg" src="" onerror="this.src='/images/img_error.png'"/>
+                </div>
+                @Html.StatusMessage()
+                @using (Html.BeginAjaxForm("EditGoodsInDetailImage", "SystemGoods", null, FormMethod.Post, new AjaxFormOptions { DataType = AjaxDataType.Json, OnErrorCallBack = "error", OnSuccessCallBack = "success" }, new { @id = "ajaxForm", @Class = "form-horizontal edit_img_right" }))
+            {
+                    <input id="hideId" type="hidden" name="id" value="" />
+                    <div class="form-group">
+                        <label class="col-xs-3 control-label">更换图片：</label>
+                        <div class="inline-block col-xs-4">
+                            <label for="editImgInput" class="btn btn-sm btn-info file-upload"><i class="fa fa-image"></i> 选择图片</label>
+                            <input id="editImgInput" class="SKUImgINput" name="imgfile" type="file" style="display:none;" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-xs-3 control-label">排序序号：</label>
+                        <div class="col-xs-4">
+                            <input type="number" id="number" name="number" min="1" value="" style="width:75%;" />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-xs-3 control-label"></label>
+                        <div class="col-xs-5">
+                            <button type="submit" class="btn btn-sm btn-info">保存</button>
+                            <button id="jsCancelEditImg" type="button" class="btn btn-sm btn-default">取消</button>
+                        </div>
+                    </div>
+                }
+            </div>
+
+            <!--新增图片-->
+            <div>
+                <h4>新增图片</h4>
+                @using (Html.BeginAjaxForm("AddGoodsInDetailImage", "SystemGoods", null, FormMethod.Post, new AjaxFormOptions { DataType = AjaxDataType.Json, OnErrorCallBack = "addImgError", OnSuccessCallBack = "addImgSuccess" }, new { @id = "addGoodsRotationImageForm", @Class = "form-horizontal" }))
+                {
+                    <input type="hidden" name="goodsId" value="@ViewData["goodsId"]" />
+                    <div id="jsImgBox" class="add_img_box">
+
+                        <div class="inline-block jsAddImgprevBox img_prev_box">
+                            <div class="jsImgInputBox">
+                                <label for="jsImgInput" class="add_label">+</label>
+                                <input id="jsImgInput" class="jsImgInput" name="addImgFiles" type="file" style="display:none;" mulpitle />
+                            </div>
+                        </div>
+
+                    </div>
+                }
+                <div style="padding-top:15px;">
+                    <button type="submit" form="addGoodsRotationImageForm" class="btn btn-sm btn-info">保存</button>
+                    <button id="jsCancelAddImg" type="button" class="btn btn-sm btn-default">取消</button>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
+        </div>
+    </div>
+
+</div>
+<script src="~/js/rotation_imgAnddetails_img.js"></script>

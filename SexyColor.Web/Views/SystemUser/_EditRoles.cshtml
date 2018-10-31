@@ -1,0 +1,175 @@
+﻿@model EditRolesModel
+@{
+    Layout = null;
+
+    Dictionary<int, string> activatedValues = Utility.GetDictionaryByEnumMemberInfo(typeof(ApplicationidEnum));
+    var applicationSelectList = new SelectList(activatedValues.Select(w => new { text = w.Value, value = w.Key.ToString().ToLower() }), "value", "text", Model.Applicationid);
+
+}
+<div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <h4 class="modal-title">编辑角色</h4>
+        </div>
+        <div class="modal-body">
+            @using (Html.BeginAjaxForm("EditRoles", "SystemUser", null, FormMethod.Post, new AjaxFormOptions { DataType = AjaxDataType.Json, OnErrorCallBack = "error", OnSuccessCallBack = "success", BeforeSubmitCallBack = "beforeSubmit" }, new { @Class = "form-horizontal form_fixed" }))
+            {
+                <div class="row">
+
+                    <div class="form-group">
+                        <label class="control-label">角色标识图片：</label>
+                        <div class="input_box">
+                            @Html.TextBoxFor(m => m.RoleImage, new { @Class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.RoleImage)
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">描述：</label>
+                        <div class="input_box">
+                            @Html.TextBoxFor(m => m.Description, new { @Class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Description)
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">所属应用：</label>
+                        <div class="input_box">
+                            @Html.DropDownListFor(w => w.Applicationid, applicationSelectList as IEnumerable<SelectListItem>, new { @class = "form-control" })
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label class="control-label">角色名称：</label>
+                        <div class="input_box">
+                            <div class="width_170">
+                                @Html.TextBoxFor(m => m.Rolename, new { @Class = "form-control" ,@readonly= "readonly" })
+                                @Html.ValidationMessageFor(m => m.Rolename)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">角色友好名称：</label>
+                        <div class="input_box">
+                            @Html.TextBoxFor(m => m.FriendlyRolename, new { @Class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.FriendlyRolename)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">是否系统内置默认：</label>
+                        <div class="input_box">
+                            <div class="width_170">
+                                @Html.CheckBoxFor(m => m.IsBuiltin, new { @Class = "flat" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+
+                    <div class="form-group">
+                        <label class="control-label">是否对外显示：</label>
+                        <div class="input_box">
+                            <div class="width_170">
+                                @Html.CheckBoxFor(m => m.IsPublic, new { @Class = "flat" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">是否启用：</label>
+                        <div class="input_box">
+                            <div class="width_170">
+                                @Html.CheckBoxFor(m => m.IsEnabled, new { @Class = "flat" })
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">是否直接关联到用户：</label>
+                        <div class="input_box">
+                            <div class="width_170">
+                                @Html.CheckBoxFor(m => m.ConnectToUser, new { @Class = "flat" })
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="clearfix"></div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">确 定</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
+                </div>
+            }
+        </div>
+
+
+    </div>
+</div>
+
+<script>
+    //编辑提交时触发
+    function beforeSubmit(arr, $form, options) {
+        //加载中
+        var $btn = $form.find('[type="submit"]').button('加载中')
+    }
+
+    function success(data) {
+        if (data.messageType == 1) {
+            $('#ajaxDialog').modal('hide');
+            swal({
+                title: '操作成功！',
+                timer: 1500,
+                showConfirmButton: false,
+                type: 'success'
+            });
+            setTimeout(function () {
+                location.reload();
+            }, 1500);
+        } else {
+            swal({
+                title: data.messageContent,
+                timer: 1500,
+                showConfirmButton: false,
+                type: 'error'
+            });
+        }
+    }
+
+    function error(data) {
+        $('#ajaxDialog').modal('hide');
+        swal({
+            title: '操作失败！',
+            timer: 1500,
+            showConfirmButton: false,
+            type: 'error'
+        });
+    }
+    /*初始化icheck*/
+    $('input.flat').iCheck({
+        checkboxClass: 'icheckbox_flat-green',
+        radioClass: 'iradio_flat-green'
+    });
+
+    $(function () {
+        jQuery.validator.addMethod('IsPositiveIntegerType',
+            function (value, element, params) {
+                if (/^[0-9]+$/.test(value)) {
+                    return true;
+                }
+                return false;
+            });
+
+        jQuery.validator.unobtrusive.adapters.add('IsPositiveIntegerType',
+            ['element'],
+            function (options) {
+                var element = $(options.form).find('#FollowerCount')[0];
+                options.rules['IsPositiveIntegerType'] = [element];
+                options.messages['IsPositiveIntegerType'] = options.message;
+            });
+    }(jQuery));
+</script>

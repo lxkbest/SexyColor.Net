@@ -1,0 +1,85 @@
+﻿@model CreateUserModel
+@{
+    Layout = null;
+}
+<div id="createDialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <h4 class="modal-title" id="exampleModalLabel">创建用户</h4>
+        </div>
+        <div class="modal-body">
+            @Html.StatusMessage()
+            @using (Html.BeginAjaxForm("CreateUser", "SystemUser", null, FormMethod.Post, new AjaxFormOptions { DataType = AjaxDataType.Json, OnErrorCallBack = "error", OnSuccessCallBack = "success" }, new { @Class = "form-horizontal" }))
+            {
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-xs-3 control-label">用户名：</label>
+                    <div class="col-xs-4">
+                        @Html.TextBoxFor(w => w.UserName,  new { @Class = "form-control", @Placeholder = "用户名" })
+                        @Html.ValidationMessageFor(w => w.UserName)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-xs-3 control-label">邮箱：</label>
+                    <div class="col-xs-4">
+                        @Html.TextBoxFor(w => w.AccountEmail, new { @Class = "form-control", @Placeholder = "邮箱" })
+                        @Html.ValidationMessageFor(w => w.AccountEmail)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-xs-3 control-label">昵称：</label>
+                    <div class="col-xs-7">
+                        @Html.TextBoxFor(w => w.NickName, new { @Class = "form-control", @Placeholder = "昵称" })
+                        @Html.ValidationMessageFor(w => w.NickName)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-xs-3 control-label">密码：</label>
+                    <div class="col-xs-7">
+                        @Html.PasswordFor(w => w.Password, new { @Class = "form-control", @Placeholder = "密码" })
+                        @Html.ValidationMessageFor(w => w.Password)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="inputEmail3" class="col-xs-3 control-label">确认密码：</label>
+                    <div class="col-xs-7">
+                        @Html.PasswordFor(w => w.PassAgain, new { @Class = "form-control", @Placeholder = "确认密码" })
+                        @Html.ValidationMessageFor(w => w.PassAgain)
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary">确 定</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
+                </div>
+            }
+
+        </div>
+
+    </div>
+
+</div>
+<script>
+    function success(data) {
+        if (data.messageType == 1) {
+            $('#ajaxDialog').modal('hide');
+            swal({
+                title: '操作成功！',
+                timer: 1500,
+                showConfirmButton: false,
+                type: 'success'
+            });
+            location.reload();
+        }
+    }
+
+    function error(data) {
+        $('#ajaxDialog').modal('hide');
+        swal({
+            title: '操作失败！',
+            timer: 1500,
+            showConfirmButton: false,
+            type: 'error'
+        });
+    }
+</script>
+

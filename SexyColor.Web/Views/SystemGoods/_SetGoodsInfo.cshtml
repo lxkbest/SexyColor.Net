@@ -1,0 +1,263 @@
+﻿@model SetGoodsInfoModel
+@{
+    Layout = null;
+    GoodsInfoStatus statusEnum = (GoodsInfoStatus)Enum.ToObject(typeof(GoodsInfoStatus), Model.Status);
+    GoodsInfoHot hotEnum = (GoodsInfoHot)Enum.ToObject(typeof(GoodsInfoHot), Model.IsHot);
+    GoodsInfoEnable enableEnum = (GoodsInfoEnable)Enum.ToObject(typeof(GoodsInfoEnable), Model.IsEnable);
+    GoodsInfoVisible visibleEnum = (GoodsInfoVisible)Enum.ToObject(typeof(GoodsInfoVisible), Model.IsVisible);
+}
+<div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <h4 class="modal-title">商品基本信息设置</h4>
+        </div>
+        <div class="modal-body">
+            @using (Html.BeginAjaxForm("SetGoodsInfo", "SystemGoods", null, FormMethod.Post, new AjaxFormOptions { DataType = AjaxDataType.Json, OnErrorCallBack = "error", OnSuccessCallBack = "success" }, new { @id = "sumitForm", @class = "form-horizontal center-block permission_add_form", @style = "width:75 %;" }))
+            {
+                @Html.HiddenFor(w => w.Goodsid)
+                <div class="row">
+                    <div class="form-group col-xs-12">
+                        <label class="control-label col-xs-2">商品名称：</label>
+                        <div class="input_box col-xs-10">
+                            <div class="">
+                                @Html.TextBoxFor(w => w.GoodsName, new { @Class = "form-control" })
+                                @Html.ValidationMessageFor(w => w.GoodsName)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-xs-12">
+                        <label class="control-label col-xs-2">二级标题：</label>
+                        <div class="input_box col-xs-10">
+                            <div class="">
+                                @Html.TextBoxFor(w => w.SubjectTitle, new { @Class = "form-control" })
+                                @Html.ValidationMessageFor(w => w.SubjectTitle)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-xs-6">
+                        <label class="control-label col-xs-4">所属分类：</label>
+                        <div class="input_box col-xs-8">
+                            <div class="width_170">
+                                @Html.TextBoxFor(w => w.CategoryLevel2Name, new { @Class = "form-control", @id = "jsTreeText" })
+                                @Html.HiddenFor(w => w.CategoryLevel2Id, new { @id = "jsTreeValue" })
+                                @Html.ValidationMessageFor(w => w.CategoryLevel2Name)
+                                <ul id="jsTreeSelect" class="ztree custom_ztree"></ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group col-xs-6">
+                        <label class="control-label col-xs-4">指定运费：</label>
+                        <div class="input_box col-xs-8">
+                            @Html.TextBoxFor(w => w.Freight, new { @Class = "form-control" })
+                            @Html.ValidationMessageFor(w => w.Freight)
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-xs-6">
+                        <label class="control-label col-xs-4">显示购买人数：</label>
+                        <div class="input_box col-xs-8">
+                            <div class="">
+                                @Html.TextBoxFor(w => w.BuyCount, new { @Class = "form-control" })
+                                @Html.ValidationMessageFor(w => w.BuyCount)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group col-xs-6">
+                        <label class="control-label col-xs-4">实际购买人数：</label>
+                        <div class="input_box col-xs-8">
+                            <div class="">
+                                @Html.TextBoxFor(w => w.RealBuyCount, new { @Class = "form-control" })
+                                @Html.ValidationMessageFor(w => w.RealBuyCount)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-xs-6">
+                        <label class="control-label col-xs-4">限制数量：</label>
+                        <div class="input_box col-xs-8">
+                            @Html.TextBoxFor(w => w.LimitPurchaseCount, new { @Class = "form-control" })
+                            @Html.ValidationMessageFor(w => w.LimitPurchaseCount)
+                        </div>
+                    </div>
+
+                    <div class="form-group col-xs-6">
+                        <label class="control-label col-xs-4">总库存：</label>
+                        <div class="input_box col-xs-8">
+                            <div class="width_170">
+                                @Html.TextBoxFor(w => w.Stock, new { @Class = "form-control" })
+                                @Html.ValidationMessageFor(w => w.Stock)
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row">
+                    <div class="form-group col-xs-6">
+                        <label class="control-label col-xs-4">排序号：</label>
+                        <div class="input_box col-xs-8">
+                            <div class="">
+                                @Html.TextBoxFor(w => w.DisplayOrder, new { @Class = "form-control" })
+                                @Html.ValidationMessageFor(w => w.DisplayOrder)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-xs-6">
+                        <label class="control-label col-xs-4">原产地：</label>
+                        <div class="input_box col-xs-8">
+                            @Html.TextBoxFor(w => w.PlaceOrigin, new { @Class = "form-control" })
+                            @Html.ValidationMessageFor(w => w.PlaceOrigin)
+                        </div>
+                    </div>
+                    <div class="form-group col-xs-6">
+                        <label class="control-label col-xs-4">是否上架：</label>
+                        <div class="input_box col-xs-8">
+                            @Html.EnumDropDownListFor(w => w.IsEnable, enableEnum, "请选择", "-1", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(w => w.IsEnable)
+                        </div>
+                    </div>
+                    <div class="form-group col-xs-6">
+                        <label class="control-label col-xs-4">状态：</label>
+                        <div class="input_box col-xs-8">
+                            @Html.EnumDropDownListFor(w => w.Status, statusEnum, "请选择", "-1", new { @class = "form-control" })
+                            @Html.ValidationMessageFor(w => w.Status)
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-xs-6">
+                        <label class="control-label col-xs-4">是否热门：</label>
+                        <div class="input_box col-xs-8">
+                            <div class="width_170">
+                                @Html.EnumDropDownListFor(w => w.IsHot, hotEnum, "请选择", "-1", new { @class = "form-control" })
+                                @Html.ValidationMessageFor(w => w.IsHot)
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group col-xs-6">
+                        <label class="control-label col-xs-4">是否前台可见：</label>
+                        <div class="input_box col-xs-8">
+                            <div class="">
+                                @Html.EnumDropDownListFor(w => w.IsVisible, visibleEnum, "请选择", "-1", new { @class = "form-control" })
+                                @Html.ValidationMessageFor(w => w.IsVisible)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-xs-6">
+                        <label class="control-label col-xs-4">市场价：</label>
+                        <div class="input_box col-xs-8">
+                            <div class="">
+                                @Html.TextBoxFor(w => w.GoodsPrice, new { @Class = "form-control" })
+                                @Html.ValidationMessageFor(w => w.GoodsPrice)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group col-xs-6">
+                        <label class="control-label col-xs-4">销售价：</label>
+                        <div class="input_box col-xs-8">
+                            <div class="">
+                                @Html.TextBoxFor(w => w.GoodsRealPrice, new { @Class = "form-control" })
+                                @Html.ValidationMessageFor(w => w.GoodsRealPrice)
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+
+                </div>
+                <div class="clearfix"></div>
+            }
+            <div class="clearfix"></div>
+            <div class="modal-footer">
+                <button type="submit" form="sumitForm" class="btn btn-primary">确 定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    (function () {
+            var G_$treeText = $("#jsTreeText"),
+                G_$ztreeUl = $("#jsTreeSelect"),
+                G_$treeVlaue = $("#jsTreeValue");
+
+            var setting = {
+            async: {
+                enable: true,
+                url: '@NavigationUrls.Instance().JsonCategory2()',
+                autoParam: ["id=categoryLevelId"],
+                otherParam: { "otherParam": "zTreeAsyncTest" },
+                dataFilter: filter
+            },
+            callback: {
+                onClick:clickNode
+            }
+        };
+        //单机节点事件
+        function clickNode(event, treeId, treeNode) {
+            if (!treeNode.isParent) {
+                G_$treeText.val(treeNode.name).blur();
+                G_$treeVlaue.val(treeNode.id);
+                G_$ztreeUl.hide();
+            }
+
+        }
+
+        //树节点过滤器
+        function filter(treeId, parentNode, childNodes) {
+            if (!childNodes) return null;
+            //for (var i = 0, l = childNodes.length; i < l; i++) {
+            //    childNodes[i].text = childNodes[i].text.replace(/\.n/g, '.');
+            //}
+            return childNodes;
+        }
+
+        //初始化ztree
+        $.getJSON("@NavigationUrls.Instance().JsonCategory()", function (data) {
+            $.fn.zTree.init($("#jsTreeSelect"), setting,data);
+        })
+
+
+        //显示ztree
+        G_$treeText.click(function () {
+            G_$ztreeUl.show();
+        });
+      })();
+</script>
+
+<script>
+    function success(data) {
+        if (data.messageType == 1) {
+            $('#ajaxDialog').modal('hide');
+            swal({
+                title: '操作成功！',
+                timer: 1500,
+                showConfirmButton: false,
+                type: 'success'
+            });
+            location.reload();
+        }
+    }
+
+    function error(data) {
+        $('#ajaxDialog').modal('hide');
+        swal({
+            title: '操作失败！',
+            timer: 1500,
+            showConfirmButton: false,
+            type: 'error'
+        });
+    }
+</script>

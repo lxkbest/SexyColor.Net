@@ -1,0 +1,210 @@
+﻿@model DetailsUserProfilesModel
+@{
+    Layout = null;
+}
+<div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <h4 class="modal-title">详细资料</h4>
+        </div>
+        <div class="modal-body">
+            @using (Html.BeginAjaxForm("EditUserProfiles", "SystemUser", null, FormMethod.Post, new AjaxFormOptions { DataType = AjaxDataType.Json, OnErrorCallBack = "error", OnSuccessCallBack = "success", BeforeSubmitCallBack = "beforeSubmit" }, new { @id = "userProfileForm", @Class = "form-horizontal form_fixed" }))
+            {
+                @Html.HiddenFor(m => m.Userid)
+                <div class="row">
+
+                    <div class="form-group">
+                        <label class="control-label">性别：</label>
+                        <div class="input_box">
+                            @Html.DropDownListFor(m => m.Sex, ViewData["Sex"] as IEnumerable<SelectListItem>, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.Sex)
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">年龄：</label>
+                        <div class="input_box">
+                            @Html.TextBoxFor(m => m.Age, new { @Class = "form-control age" })
+                            @Html.ValidationMessageFor(m => m.Age)
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">生日：</label>
+                        <div class="input_box">
+                            <div class="input-group date" id="datetimepicker1" style="margin-bottom:0;">
+                                @Html.TextBoxFor(m => m.Birthday, string.Format("{0:D}", Model.Birthday), new { @id = "jsBirthdayPicker", @Class = "form-control", @style = "width:120px;margin-bottom:0;" })
+                                <div class="input-group-addon">
+                                    <i class="glyphicon glyphicon-calendar"></i>
+                                </div>
+                            </div>
+                            @Html.ValidationMessageFor(m => m.Birthday)
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label class="control-label">性取向：</label>
+                        <div class="input_box">
+                            <div class="width_170">
+                                @Html.DropDownListFor(m => m.SexualOrientation, ViewData["SexualOrientation"] as IEnumerable<SelectListItem>, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.SexualOrientation)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">性取向是否保密：</label>
+                        <div class="input_box">
+                            @Html.DropDownListFor(m => m.IsSexualorientationSecrecy, ViewData["IsOK"] as IEnumerable<SelectListItem>, new { @class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.IsSexualorientationSecrecy)
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">婚姻状况：</label>
+                        <div class="input_box">
+                            <div class="width_170">
+                                @Html.DropDownListFor(m => m.Marriage, ViewData["Marriage"] as IEnumerable<SelectListItem>, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.Marriage)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+
+                    <div class="form-group">
+                        <label class="control-label">婚姻状况是否保密：</label>
+                        <div class="input_box">
+                            <div class="width_170">
+                                @Html.DropDownListFor(m => m.IsMarriageSecrecy, ViewData["IsOK"] as IEnumerable<SelectListItem>, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.IsMarriageSecrecy)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">所在地是否保密：</label>
+                        <div class="input_box">
+                            <div class="width_170">
+                                @Html.DropDownListFor(m => m.IsNowareaSecrecy, ViewData["IsOK"] as IEnumerable<SelectListItem>, new { @class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.IsNowareaSecrecy)
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">所属省：</label>
+                        <div class="input_box">
+                            <div class="width_170">
+                                @Html.TextBoxFor(m => m.Provinces, new { @Class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.Provinces)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="form-group">
+                        <label class="control-label">所属市：</label>
+                        <div class="input_box">
+                            <div class="width_170">
+                                @Html.TextBoxFor(m => m.City, new { @Class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.City)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">资料完整度：</label>
+                        <div class="input_box">
+                            <div class="width_170">
+                                @Html.TextBoxFor(m => m.Integrity, Model.Integrity + "%", new { @Class = "form-control", @readonly = "readonly" })
+                                @Html.ValidationMessageFor(m => m.Integrity)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="clearfix"></div>
+
+            }
+        </div>
+        <div class="modal-footer">
+            <button type="submit" form="userProfileForm" class="btn btn-primary">确 定</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    /*提交前执行*/
+    function beforeSubmit(arr, $form, options) {
+        var $btn = $form.find('[type="submit"]').button('加载中')
+    }
+    /*请求成功回调*/
+    function success(data) {
+        if (data.messageType == 1) {
+            $('#ajaxDialog').modal('hide');
+            swal({
+                title: '编辑成功！',
+                timer: 1500,
+                showConfirmButton: false,
+                type: 'success'
+            });
+            setTimeout(function () {
+                location.reload();
+            }, 1500);
+        } else {
+            swal({
+                title: data.messageContent,
+                timer: 1500,
+                showConfirmButton: false,
+                type: 'error'
+            });
+        }
+    }
+    /*请求错误回调*/
+    function error(data) {
+        $('#ajaxDialog').modal('hide');
+        swal({
+            title: '编辑失败！',
+            timer: 1500,
+            showConfirmButton: false,
+            type: 'error'
+        });
+    }
+    /*初始化icheck 2017-5-22 伍冠源*/
+    //$('input.flat').iCheck({
+    //    checkboxClass: 'icheckbox_flat-green',
+    //    radioClass: 'iradio_flat-green'
+    //});
+
+    $(function () {
+        jQuery.validator.addMethod('IsPositiveIntegerType',
+            function (value, element, params) {
+                if (/^[0-9]+$/.test(value)) {
+                    return true;
+                }
+                return false;
+            });
+
+        jQuery.validator.unobtrusive.adapters.add('IsPositiveIntegerType',
+            ['element'],
+            function (options) {
+                var element = $(options.form).find('.age');
+                options.rules['IsPositiveIntegerType'] = element;
+                options.messages['IsPositiveIntegerType'] = options.message;
+            });
+
+        /*日期选择器*/
+        var picker1 = $('#jsBirthdayPicker').datetimepicker({
+            format: 'YYYY-MM-DD',
+            locale: moment.locale('zh-cn'),
+            maxDate: moment().add(0, 'days').format("YYYY-MM-DD")
+        });
+
+    }(jQuery));
+</script>

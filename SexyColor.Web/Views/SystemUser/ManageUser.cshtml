@@ -1,0 +1,501 @@
+﻿@model PagingDataSet<User>
+@{
+    Layout = "~/Views/Shared/_SystemLayout.cshtml";
+    var rawUrl = RequestHelper.RawUrl(HttpContextCore.Current.Request);
+    var currentUser = ViewData.Get<User>("currentUser", null);
+
+    Style.Reqiured("Jcrop").AtHead();
+    Script.Reqiured("Jcrop").AtFoot();
+}
+
+<div class="">
+    <div class="row">
+        <div class="col-md-12 col-sm-12 col-xs-12">
+            <div class="x_panel">
+                <div class="x_title">
+                    <ol class="breadcrumb">
+                        <li><a href="#">系统后台</a></li>
+                        <li><a href="#">用户模块</a></li>
+                        <li class="active">用户管理</li>
+                    </ol>
+                    <div class="clearfix"></div>
+                </div>
+                <div class="x_content">
+                    <div class="table-responsive">
+                        @using (Html.BeginForm("ManageUser", "SystemUser", FormMethod.Get, new { @Class = "form-horizontal form_fixed" }))
+                        {
+                            <div class="row">
+                                <div class="form-group">
+                                    <label class="control-label">用户名称</label>
+                                    <div class="input_box">
+                                        <input type="text" name="keyWord" value="@ViewData["Keyword"]" class="form-control" placeholder="姓名、昵称" />
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="control-label">用户邮箱</label>
+                                    <div class="input_box">
+                                        <input type="text" name="accountEmail" value="@ViewData["AccountEmailFilter"]" class="form-control" placeholder="Email">
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label">注册时间</label>
+                                    <div class="input_box range_box">
+                                        <div class="input_box_2">
+                                            <div class="input-group date" id="datetimepicker1">
+                                                <input type="text" name="registerTimeLowerLimit" value="@ViewData["RegisterTimeLowerLimit"]" class="form-control" placeholder="开始时间">
+                                                <div class="input-group-addon">
+                                                    <i class="glyphicon glyphicon-calendar"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="_separator">
+                                            -
+                                        </div>
+                                        <div class="input_box_2">
+                                            <div class="input-group date" id="datetimepicker2">
+                                                <input type="text" name="registerTimeUpperLimit" value="@ViewData["RegisterTimeUpperLimit"]" class="form-control" placeholder="结束时间">
+                                                <div class="input-group-addon">
+                                                    <i class="glyphicon glyphicon-calendar"></i>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group">
+                                    <label class="control-label">用户角色</label>
+                                    <div class="input_box">
+                                        @Html.DropDownList("rolename", ViewData["Rolename"] as IEnumerable<SelectListItem>, "全部", new { @Class = "form-control" })
+
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label">用户状态</label>
+                                    <div class="input_box">
+                                        @Html.DropDownList("isActivated", ViewData["IsActivated"] as IEnumerable<SelectListItem>, "全部", new { @Class = "form-control" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label">用户等级</label>
+                                    <div class="input_box short_box">
+                                        <input type="text" name="userRankLowerLimit" value="@ViewData["UserRankLowerLimit"]" maxlength="5" class="form-control" id="exampleInputAmount" placeholder="数字" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+                                        <div class="_separator">
+                                            -
+                                        </div>
+                                        <input type="text" name="userRankUpperLimit" value="@ViewData["UserRankUpperLimit"]" maxlength="5" class="form-control" id="exampleInputAmount" placeholder="数字" onkeyup="this.value=this.value.replace(/\D/g,'')" onafterpaste="this.value=this.value.replace(/\D/g,'')">
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="form-group">
+                                    <label class="control-label">是否管制</label>
+                                    <div class="input_box">
+                                        @Html.DropDownList("isModerated", ViewData["IsModerated"] as IEnumerable<SelectListItem>, "全部", new { @Class = "form-control" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label">是否封禁</label>
+                                    <div class="input_box">
+                                        @Html.DropDownList("isBanned", ViewData["IsBanned"] as IEnumerable<SelectListItem>, "全部", new { @Class = "form-control" })
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="control-label"></label>
+                                    <div class="input_box">
+                                        <button type="submit" class="btn btn-success _submit">
+                                            <i class="fa fa-search"></i>
+                                            搜 索
+                                        </button>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <div class="clearfix"></div>
+                        }
+                        <div class="x_content text-right">
+                            @if (PermissionsCollction.IsPass || PermissionsCollction.PermissionItemsCollction.Count > 0
+&& PermissionsCollction.PermissionItemsCollction.Get<PermissionItems>("_CreateUser", null) != null)
+                            {
+                                <button type="button" id="adduser" class="btn btn-info">添加用户</button>
+                            }
+                            <button type="button" id="activated" class="btn btn-info">激活</button>
+                            <button type="button" id="unactivated" class="btn btn-info">取消激活</button>
+                            <button type="button" id="banned" class="btn btn-info">封禁</button>
+                            <button type="button" id="unbanned" class="btn btn-info">取消封禁</button>
+                        </div>
+
+                        @using (Html.BeginForm("", "", FormMethod.Post, new { id = "manageUsersForm", @Class = "table_form" }))
+                        {
+
+                            @Html.Hidden("returnUrl", rawUrl)
+                            @if (Model.TotalRecords > 0)
+                            {
+                                <table class="table table-striped jambo_table bulk_action">
+                                    <thead>
+                                        <tr class="headings">
+                                            <th>
+                                                <input type="checkbox" class="allCheck flat">
+                                            </th>
+                                            <th class="column-title">头像</th>
+                                            <th class="column-title">用户名</th>
+                                            <th class="column-title">用户昵称</th>
+                                            <th class="column-title">Email</th>
+                                            <th class="column-title">关注/粉丝数</th>
+                                            <th class="column-title">商品浏览/收藏记录</th>
+                                            <th class="column-title">手机号码</th>
+                                            <th class="column-title">等级</th>
+                                            <th class="column-title">注册日期</th>
+                                            <th class="column-title"></th>
+                                            <th class="column-title no-link last">
+                                                <span class="nobr"></span>
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    @if (Model != null && Model.TotalRecords > 0)
+                                    {
+                                        RolesService roleService = DIContainer.Resolve<RolesService>();
+
+                                        IGoodsBrowseLogsService goodsBrowseLogsService = DIContainer.Resolve<IGoodsBrowseLogsService>();
+                                        IGoodsCollectionLogsService goodsCollectionLogsService = DIContainer.Resolve<IGoodsCollectionLogsService>();
+
+                                        foreach (User user in Model)
+                                        {
+
+                                            <tr></tr>
+                                            <tr class="pointer">
+                                                <td>
+                                                    <label>
+                                                        @Html.CustomCheckBox("customCheck", user.UserId, false, new { @class = "flat" })
+                                                    </label>
+                                                </td>
+                                                <td class="td_user">
+                                                    <img title="@(user.UserName)" src="@user.HeadImg" width="50" height="50" />
+                                                </td>
+                                                <td class="td_user">
+                                                    <a href="###" title="@(user.UserName)" target="_blank">@(user.UserName.AsTrim(10))</a>
+                                                    @{
+                                                        IEnumerable<Roles> rolesInUser = roleService.GetRoles(roleService.GetRolesNamesInUser(user.UserId));
+                                    }
+
+                                                    <p>
+                                                        @{
+                                                            foreach (var item in rolesInUser)
+                                                            {
+
+                                                                <i title="@(item.FriendlyRolename)" class="glyphicon glyphicon-user"></i>
+                                                                @*<img title="@(item.FriendlyRolename)" src="@NavigationUrls.Instance().LogoUrl(item.RoleImage, CommonTypeKey.Instance().Role(), ImageSizeTypeKey.Instance().Small())" width="16" height="16" />*@
+                                                            }
+                                                        }
+                                                    </p>
+                                                    <p>
+                                                        @{
+                                                            if (user.IsBanned)
+                                                            {
+                                                                <i title="已封禁" class="fa fa-warning active"></i>
+                                                            }
+                                                            else
+                                                            {
+                                                                <i title="未封禁" class="fa fa-warning"></i>
+                                                            }
+
+                                                            if (user.IsModerated)
+                                                            {
+                                                                <i title="已管制" class="fa fa-bolt active"></i>
+                                                            }
+                                                            else
+                                                            {
+                                                                <i title="未管制" class="fa fa-bolt"></i>
+                                                            }
+
+                                                            if (!user.IsActivated)
+                                                            {
+                                                                <i title="未激活" class="fa fa-eye-slash"></i>
+                                                            }
+                                                            else
+                                                            {
+                                                                <i title="已激活" class="fa fa-eye-slash active"></i>
+                                                            }
+                                                        }
+                                                    </p>
+                                                </td>
+                                                <td>@(user.NickName)</td>
+                                                <td>@(user.AccountEmail)</td>
+                                                <td>
+                                                    <a class="jsFans btn btn-xs btn-info" data-url="@NavigationUrls.Instance().UserFocus(user.UserId)" href="###" data-toggle="tooltip" title="查看关注用户">@user.FollowedCount</a>
+                                                    &nbsp;/&nbsp;
+                                                    <a class="jsFans btn btn-xs btn-info" data-url="@NavigationUrls.Instance().UserFollowed(user.UserId)" href="###" data-toggle="tooltip" title="查看粉丝">@user.FollowerCount</a>
+                                                </td>
+                                                <td>
+                                                    <a class="jsFans btn btn-xs btn-info" data-url="@NavigationUrls.Instance().GoodsBrowseLogs(user.UserId)" href="###" data-toggle="tooltip" title="商品浏览记录">@goodsBrowseLogsService.GetGoodsBrowseLogsCount(user.UserId)</a>
+                                                    &nbsp;/&nbsp;
+                                                    <a class="jsFans btn btn-xs btn-info" data-url="@NavigationUrls.Instance().GetGoodsCollectionLogs(user.UserId)" href="###" data-toggle="tooltip" title="商品收藏记录">@goodsCollectionLogsService.GetGoodsCollectionLogsCount(user.UserId)</a>
+                                                </td>
+                                                <td>@(user.AccountMobile)</td>
+                                                <td class="a-right a-right ">@(user.Rank)</td>
+                                                <td>@(user.DateCreated.ToDateString())</td>
+                                                <td>
+                                                    <a href="@NavigationUrls.Instance().QueryUserAddress(user.UserId)" class="btn btn-xs btn-info">查询地址</a>
+                                                    <button type="button" class="btn show btn-xs btn-info detailsUserProfiles" data-toggle="modal" data-backdrop="static" data-url="@NavigationUrls.Instance().DetailsUserProfiles(user.UserId)">详细资料</button>
+                                                    <button type="button" class="btn show btn-xs btn-info setHeadImage" data-toggle="modal" data-backdrop="static" data-url="@NavigationUrls.Instance().SetHeadImage(user.UserId)">设置头像</button>
+                                                </td>
+                                                <td class="last">
+                                                    <button type="button" class="btn show btn-xs btn-info setRoles" data-toggle="modal" data-backdrop="static" data-url="@NavigationUrls.Instance().SetRoles(user.UserId, rawUrl)">设置角色</button>
+                                                    <button type="button" class="btn show btn-xs btn-info resetPassword" data-toggle="modal" data-backdrop="static" data-url="@NavigationUrls.Instance().ResetPassword(user.UserId)">重置密码</button>
+                                                    <button type="button" class="editUser btn show btn-xs btn-info" data-toggle="modal" data-backdrop="static" data-url="@NavigationUrls.Instance().EditUser(user.UserId)">编辑</button>
+                                                    @{
+                                                        if (currentUser.UserId != user.UserId)
+                                                        {
+                                                            <button type="button" class="btn show btn-xs btn-info deleteUser" data-toggle="modal" data-backdrop="static" data-url="@NavigationUrls.Instance().DeleteUser(user.UserId, rawUrl)">删除</button>
+                                                        }
+                                                        else
+                                                        {
+                                                            <button type="button" class="btn show btn-xs btn-info" disabled="disabled">删除</button>
+                                                        }
+                                                    }
+                                                </td>
+                                            </tr>
+
+                                                            }
+                                                        }
+                                </table>
+                                <div>
+                                    @Html.PagingResults(Model)
+                                    @Html.PagingButton(Model)
+                                    <div class="clearfix"></div>
+                                </div>
+                                                        }
+                                                        else
+                                                        {
+                                                            <div class="text-center">
+                                                                搜索不到数据
+                                                            </div>
+                                                        }
+                                                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- modal 弹框模板-->
+<div class="modal fade" id="ajaxDialog" tabindex="-1" role="dialog" aria-labelledby="modalLabel" data-backdrop="static">
+    <div id="dialog" class="modal-dialog modal-md" role="document">
+    </div>
+</div>
+
+
+@section Scripts{
+    <script>
+        $(function () {
+            var picker1 = $('#datetimepicker1').datetimepicker({
+                format: 'YYYY-MM-DD',
+                locale: moment.locale('zh-cn'),
+                maxDate: moment().add(1, 'days').format("YYYY-MM-DD")
+            });
+
+            var picker2 = $('#datetimepicker2').datetimepicker({
+                format: 'YYYY-MM-DD',
+                locale: moment.locale('zh-cn'),
+                maxDate: moment().add(1, 'days').format("YYYY-MM-DD")
+            });
+        });
+
+        function verify() {
+            if ($("input[name='customCheck']:checked").length <= 0) {
+                swal({
+                    title: '至少选择一位用户！',
+                    timer: 1500,
+                    showConfirmButton: false,
+                    type: 'error'
+                });
+                return false;
+            } return true;
+        }
+
+        $('.allCheck').on('ifClicked', function (event) {
+            var items = document.getElementsByName('customCheck');
+            for (var i = 0; i < items.length; i++) {
+                if (items[i].type == 'checkbox') {
+                    if (this.checked)
+                        $(items[i]).iCheck('uncheck');
+                    else {
+                        $(items[i]).iCheck('check');
+                    }
+                }
+            }
+        });
+        //批量激活用户
+        $('#activated').click(function () {
+            if (!verify()) {
+                return false;
+            }
+            sweetAlert({
+                title: "您确定要激活用户吗?",
+                text: "",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                closeOnConfirm: false
+            }, function () {
+                //确定后回调函数
+                $('#manageUsersForm').attr('action', '@NavigationUrls.Instance().ActivatedUser(true)');
+                $('#manageUsersForm').submit();
+            });
+
+        });
+        //批量取消激活用户
+        $('#unactivated').click(function () {
+            if (!verify()) {
+                return false;
+            }
+            sweetAlert({
+                title: "您确定要激活用户吗?",
+                text: "",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                closeOnConfirm: false
+            }, function () {
+                //确定后回调函数
+                $('#manageUsersForm').attr('action', '@NavigationUrls.Instance().ActivatedUser(false)');
+                $('#manageUsersForm').submit();
+            });
+
+        });
+
+        $("#banned").click(function () {
+            if (!verify()) {
+                            return false;
+            }
+            $.get("@NavigationUrls.Instance().BannedUser()", function (html) {
+                $("#dialog").html(html);
+                $('#ajaxDialog').modal('show');
+            })
+        })
+
+        $("#unbanned").click(function () {
+            if (!verify()) {
+                return false;
+            }
+            $('#manageUsersForm').attr('action', '@NavigationUrls.Instance().UnBannedUser(rawUrl)');
+            $('#manageUsersForm').submit();
+        })
+        //删除用户
+        $(".deleteUser").click(function () {
+            var url = $(this).data("url");
+            sweetAlert({
+                title: "您确定要删除用户吗?",
+                text: "",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                closeOnConfirm: false
+            }, function () {
+                //确定后回调函数
+                $('#manageUsersForm').attr('action', url);
+                $('#manageUsersForm').submit();
+            });
+        });
+
+        $("#adduser").click(function () {
+            $.get("@NavigationUrls.Instance().AddUser()", function (html) {
+                $("#dialog").removeClass().addClass("modal-dialog modal-md").html(html);
+                $('#ajaxDialog').modal('show');
+            })
+        })
+
+        $(".setRoles").click(function () {
+            var url = $(this).data("url");
+            $.get(url, function (html) {
+                $("#dialog").removeClass().addClass("modal-dialog modal-md").html(html);
+                $('#ajaxDialog').modal('show');
+            })
+
+        })
+
+        $(".setHeadImage").click(function () {
+            var url = $(this).data("url");
+            $.get(url, function (html) {
+                $("#dialog").removeClass().addClass("modal-dialog modal-lg").html(html);
+                $('#ajaxDialog').modal('show');
+            })
+        })
+
+        $(".resetPassword").click(function () {
+            var url = $(this).data("url");
+            $.post(url, function (data) {
+                if (data.messageType == 1) {
+                    swal({
+                        title: '操作成功！',
+                        timer: 1500,
+                        showConfirmButton: false,
+                        type: 'success'
+                    });
+                    location.reload();
+                } else {
+                    swal({
+                        title: '操作失败！',
+                        timer: 1500,
+                        showConfirmButton: false,
+                        type: 'error'
+                    });
+                }
+            })
+        })
+        /*编辑用户 2017-5-18 伍冠源*/
+        $(".editUser").click(function () {
+            var url = $(this).data("url");
+            $.get(url, function (html) {
+                $("#dialog").removeClass().addClass("modal-dialog modal-lg").html(html);
+                $('#ajaxDialog').modal('show');
+            })
+        });
+
+        /*查看资料 2017-5-18 伍冠源*/
+        $(".detailsUserProfiles").click(function () {
+            var url = $(this).data("url");
+            $.get(url, function (html) {
+                $("#dialog").removeClass().addClass("modal-dialog modal-lg").html(html);
+                $('#ajaxDialog').modal('show');
+            })
+        });
+        /*查看粉丝、关注用户、商品浏览、收藏记录 2017-5-23 伍冠源*/
+        $(".jsFans").click(function () {
+            AjaxUtility.loadPartialPageModal(this);
+        });
+        /*粉丝分页 2017-5-24 伍冠源*/
+        $('#ajaxDialog').on("click", ".jsFansTable .pagination a", function (e) {
+            e.preventDefault();
+            var url = $(this).attr("href");
+            if (url.indexOf("###") === -1) {
+                $.ajax({
+                    method: "GET",
+                    url: url,
+                    success: function (data) {
+                        if (data.messageType <= 0) {
+                            swal(data.messageContent, "", "error");
+                            return;
+                        }
+                        $("#dialog").html(data);
+                    },
+                    error: function () {
+                        swal("系统异常", "", "error");
+                    }
+                });
+            }
+        });
+    </script>
+}

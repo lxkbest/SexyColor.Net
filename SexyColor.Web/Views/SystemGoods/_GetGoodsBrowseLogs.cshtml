@@ -1,0 +1,66 @@
+﻿@model PagingDataSet<GoodsBrowseLogs>
+@{
+    Layout = null;
+}
+<style>
+</style>
+
+<div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <h4 class="modal-title">浏览商品记录</h4>
+        </div>
+        <div class="jsFansTable modal-body table_form">
+
+            @if (Model.TotalRecords > 0)
+            {
+                <table class="table table-striped jambo_table bulk_action">
+                    <thead>
+                        <tr class="headings">
+                            <th class="column-title">商品图片</th>
+                            <th class="column-title">商品名称</th>
+                            <th class="column-title">商品价格</th>
+                            <th class="column-title">创建时间</th>
+                        </tr>
+                    </thead>
+                    @if (Model != null && Model.TotalRecords > 0)
+                    {
+                        foreach (GoodsBrowseLogs goodsBrowseLogs in Model)
+                        {
+
+                            <tr></tr>
+                                <tr class="pointer">
+                                    <td class="td_user">
+                                        <img src="@goodsBrowseLogs.GoodsImageUrl" width="50" height="50" />
+                                    </td>
+                                    <td>
+                                        @(goodsBrowseLogs.GoodsName)
+                                    </td>
+                                    <td>@(goodsBrowseLogs.GoodsPrice)</td>
+                                    <td>@(goodsBrowseLogs.DateCreated.ToDateString(true))</td>
+                                </tr>
+
+                        }
+                    }
+                </table>
+                    <div>
+                        @Html.PagingResults(Model)
+                        @Html.PagingButton(Model)
+                        <div class="clearfix"></div>
+                    </div>
+            }
+            else
+            {
+                <div class="text-center">
+                    搜索不到数据
+                </div>
+            }
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
+        </div>
+    </div>
+</div>
+

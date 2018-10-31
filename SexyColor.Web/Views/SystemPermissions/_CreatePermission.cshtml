@@ -1,0 +1,163 @@
+﻿@model CreatePermissionModel
+@{
+    Layout = null;
+}
+
+<div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <h4 class="modal-title">添加权限</h4>
+        </div>
+        <div class="modal-body">
+            @using (Html.BeginAjaxForm("CreatePermission", "SystemPermissions", null, FormMethod.Post, new AjaxFormOptions { DataType = AjaxDataType.Json, OnErrorCallBack = "error", OnSuccessCallBack = "success" }, new { @id= "sumitForm", @class = "form-horizontal center-block permission_add_form", @style = "width:75 %;" }))
+            {
+                <div class="row">
+                    <div class="form-group col-xs-6">
+                        <label class="control-label col-xs-4">权限名称：</label>
+                        <div class="input_box col-xs-8">
+                            <div class="width_170">
+                                @Html.TextBoxFor(w => w.Itemname, new { @Class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.Itemname)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group col-xs-6">
+                        <label class="control-label col-xs-4">所属父级：</label>
+                        <div class="input_box col-xs-8">
+                            <div class="width_170">
+                                @Html.TextBoxFor(w => w.ParentsName, new { @Class = "form-control",@id="jsTreeText" })
+                                @Html.HiddenFor(w => w.Parentsid, new { @id="jsTreeValue"})
+                                @Html.ValidationMessageFor(m => m.ParentsName)
+                                <ul id="jsTreeSelect" class="ztree custom_ztree"></ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-xs-12">
+                        <label class="control-label col-xs-2">权限Url：</label>
+                        <div class="input_box col-xs-10">
+                            <div class="">
+                                @Html.TextBoxFor(w => w.ItemUrl, new { @Class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.ItemUrl)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-xs-6">
+                        <label class="control-label col-xs-4">所属应用：</label>
+                        <div class="input_box col-xs-8">
+                            <select asp-for="@Model.Applicationid" asp-items="@Html.GetEnumSelectList(typeof(ApplicationidEnum))" class="form-control" >
+                                <option value="0">请选择</option>
+                            </select>
+                            @Html.ValidationMessageFor(m => m.Applicationid)
+                        </div>
+                    </div>
+
+                    <div class="form-group col-xs-6">
+                        <label class="control-label col-xs-4">排序：</label>
+                        <div class="input_box col-xs-8">
+                            <div class="width_170">
+                                @Html.TextBoxFor(w => w.DisplayOrder, new { @Class = "form-control" })
+                                @Html.ValidationMessageFor(m => m.DisplayOrder)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="form-group col-xs-6">
+                        <label class="control-label col-xs-4">类型：</label>
+                        <div class="input_box col-xs-8">
+                            <select asp-for="@Model.ItemType" asp-items="@Html.GetEnumSelectList(typeof(PermissionItemsType))" class="form-control">
+                                <option value="0">请选择</option>
+                            </select>
+                            @Html.ValidationMessageFor(m => m.ItemType)
+                        </div>
+                    </div>
+                    <div class="form-group col-xs-6">
+                        <label class="control-label col-xs-4">是否新功能：</label>
+                        <div class="input_box col-xs-8">
+                            <select asp-for="@Model.IsNewAction" asp-items="@Html.GetEnumSelectList(typeof(IsNewAtionEnum))" class="form-control">
+                                <option value="-1">请选择</option>
+                            </select>
+                            @Html.ValidationMessageFor(m => m.IsNewAction)
+                        </div>
+                    </div>
+                </div>
+                <div class="clearfix"></div>
+            }
+            <div class="clearfix"></div>
+            <div class="modal-footer">
+                <button type="submit" form="sumitForm" class="btn btn-primary" >确 定</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function success(data) {
+        if (data.messageType == 1) {
+            $('#ajaxDialog').modal('hide');
+            swal({
+                title: '操作成功！',
+                timer: 1500,
+                showConfirmButton: false,
+                type: 'success'
+            });
+            location.reload();
+        }
+    }
+
+    function error(data) {
+        $('#ajaxDialog').modal('hide');
+        swal({
+            title: '操作失败！',
+            timer: 1500,
+            showConfirmButton: false,
+            type: 'error'
+        });
+    }
+    //全局变量
+    var G_$treeText = $("#jsTreeText"),
+        G_$ztreeUl = $("#jsTreeSelect"),
+        G_$treeVlaue = $("#jsTreeValue");
+    //jquery ready
+    $(function () {
+        var setting = {
+            async: {
+                enable: true,
+                url: '@NavigationUrls.Instance().JsonPermission("0")',
+                autoParam: ["id=itemKey"],
+                otherParam: { "otherParam": "zTreeAsyncTest" },
+                dataFilter: filter
+            },
+            callback: {
+                onClick:clickNode
+            }
+        };
+        //单机节点事件
+        function clickNode(event, treeId, treeNode) {
+            G_$treeText.val(treeNode.name).blur();
+            G_$treeVlaue.val(treeNode.id);
+            G_$ztreeUl.hide();
+        }
+
+        //树节点过滤器
+        function filter(treeId, parentNode, childNodes) {
+            if (!childNodes) return null;
+            //for (var i = 0, l = childNodes.length; i < l; i++) {
+            //    childNodes[i].text = childNodes[i].text.replace(/\.n/g, '.');
+            //}
+            return childNodes;
+        }
+        $.fn.zTree.init($("#jsTreeSelect"), setting);
+
+        //显示ztree
+        G_$treeText.click(function () { 
+            G_$ztreeUl.show();
+        });
+    });
+</script>

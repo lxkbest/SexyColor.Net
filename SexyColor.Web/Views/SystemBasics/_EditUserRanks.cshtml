@@ -1,0 +1,91 @@
+﻿@model EditUserRanksModel
+@{
+    Layout = null;
+}
+<div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <h4 class="modal-title">编辑用户等级</h4>
+        </div>
+        <div class="modal-body">
+            @using (Html.BeginAjaxForm("EditUserRanks", "SystemBasics", null, FormMethod.Post, new AjaxFormOptions { DataType = AjaxDataType.Json, OnErrorCallBack = "error", OnSuccessCallBack = "success", BeforeSubmitCallBack = "beforeSubmit" }, new {@id= "editUserRanksForm", @Class = "form-horizontal form_fixed" }))
+            {
+                <div class="row">
+                        @Html.HiddenFor(m=>m.Rank)
+                    <div class="form-group">
+                        <label class="control-label">级别名称：</label>
+                        <div class="input_box">
+                            @Html.TextBoxFor(m => m.RankName, new { @Class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.RankName)
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">经验值下限：</label>
+                        <div class="input_box">
+                            @Html.TextBoxFor(m => m.PointLower, new { @Class = "form-control" })
+                            @Html.ValidationMessageFor(m => m.PointLower)
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="clearfix"></div>
+               
+            }
+        </div>
+        <div class="modal-footer">
+            <button type="submit" form="editUserRanksForm" class="btn btn-primary">确 定</button>
+            <button type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    //编辑提交时触发
+    function beforeSubmit(arr, $form, options) {
+        //加载中
+        var $btn = $form.find('[type="submit"]').button('加载中')
+    }
+
+    function success(data) {
+        var msg = data.messageContent;
+        if (data.messageType == 1) {
+            $('#ajaxDialog').modal('hide');
+            swal({
+                title: msg,
+                timer: 1500,
+                showConfirmButton: false,
+                type: 'success'
+            });
+            setTimeout(function () {
+                location.reload();
+            }, 1500);
+        } else {
+            swal({
+                title: msg,
+                timer: 1500,
+                showConfirmButton: false,
+                type: 'error'
+            });
+        }
+    }
+
+    function error(data) {
+        $('#ajaxDialog').modal('hide');
+        swal({
+            title: '未知错误！',
+            timer: 1500,
+            showConfirmButton: false,
+            type: 'error'
+        });
+    }
+    /*初始化icheck*/
+    $('input.flat').iCheck({
+        checkboxClass: 'icheckbox_flat-green',
+        radioClass: 'iradio_flat-green'
+    });
+
+</script>

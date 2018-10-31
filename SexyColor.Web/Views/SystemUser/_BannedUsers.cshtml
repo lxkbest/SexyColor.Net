@@ -1,0 +1,101 @@
+﻿@model BannedUserModel
+@{
+    Layout = null;
+    List<SelectListItem> items = new List<SelectListItem>();
+    string[] reasonkist = { "亵渎", "广告", "发垃圾广告", "恶意攻击他人", "不雅的用户名", "恶意的链接", "其他" };
+    for (int i = 0; i < reasonkist.Count(); i++)
+    {
+        items.Add(new SelectListItem { Value = i.ToString(), Text = reasonkist.ElementAt(i) });
+    }
+    SelectList reasons = new SelectList(items, "Value", "Text");
+}
+<div id="bannedDialog">
+   
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">封禁用户</h4>
+            </div>
+            <div class="modal-body">
+                @Html.StatusMessage()
+                @using (Html.BeginAjaxForm("BannedUsers", "SystemUser", null, FormMethod.Post, new AjaxFormOptions { DataType = AjaxDataType.Json, OnErrorCallBack = "error", OnSuccessCallBack = "success" }, new { @Class = "form-horizontal" }))
+                {
+                    @Html.Hidden("UserIds")
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-xs-3 control-label">截止时间：</label>
+                        <div class="col-xs-4">
+                            <div class="input-group date" id="datetimepicker_BanDeadline">
+                                @Html.TextBox("BanDeadline", "", new { @Class = "form-control", @placeholder = "截止时间" })
+                                <div class="input-group-addon">
+                                    <i class="glyphicon glyphicon-calendar"></i>
+                                </div>
+                            </div>
+                            @Html.ValidationMessage("BanDeadline")
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-xs-3 control-label">封禁原因：</label>
+                        <div class="col-xs-4">
+                            @Html.DropDownList("reasons", reasons as IEnumerable<SelectListItem>, "请选择", new { @Class = "form-control" })
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="inputEmail3" class="col-xs-3 control-label"></label>
+                        <div class="col-xs-7">
+                            @Html.TextArea("BanReason", new { @rows = "5", @Class = "form-control" })
+                            @Html.ValidationMessage("BanReason")
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">确 定</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
+                    </div>
+                }
+ 
+            </div>
+            
+        </div>
+
+</div>
+<script>
+    $(function () {
+        var banDeadlinePicker = $('#datetimepicker_BanDeadline').datetimepicker({
+            format: 'YYYY-MM-DD',
+            locale: moment.locale('zh-cn')
+        });
+
+        var userId = "";
+        $("input[name='customCheck']:checked").each(function () {
+            userId += $(this).val() + ',';
+        });
+
+        $("#reasons").livequery("change", function () {
+            $('#BanReason').html(this.options[this.selectedIndex].text);
+        });
+        $("#UserIds").val(userId);
+
+    });
+
+    function success(data) {
+        if (data.messageType == 1) {
+            $('#ajaxDialog').modal('hide');
+            swal({
+                title: '操作成功！',
+                timer: 1500,
+                showConfirmButton: false,
+                type: 'success'
+            });
+            location.reload();
+        }
+    }
+
+    function error(data) {
+        $('#ajaxDialog').modal('hide');
+        swal({
+            title: '操作失败！',
+            timer: 1500,
+            showConfirmButton: false,
+            type: 'error'
+        });
+    }
+</script>

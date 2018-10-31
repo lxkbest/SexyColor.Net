@@ -1,0 +1,66 @@
+﻿@model DetailsUserAddressModel
+@{
+    Layout = null;
+
+}
+<div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <h4 class="modal-title">用户地址详情</h4>
+        </div>
+        <div class="modal-body">
+           <div class="form-horizontal">
+                <div class="row">
+                    <div class="form-group col-xs-6">
+                        <label class="col-xs-4">收件人：</label>
+                        <div class="col-xs-8">
+                           @Html.DisplayTextFor(m=>m.Name)
+                        </div>
+                    </div>
+                    <div class="form-group col-xs-6">
+                        <label class="col-xs-4">手机号码：</label>
+                        <div class="col-xs-8">
+                            @Html.DisplayTextFor(m => m.Phone)
+                        </div>
+                    </div>
+                </div>
+
+               <div class="row">
+                   <div class="form-group col-xs-6">
+                       <label class="col-xs-4">收件地址：</label>
+                       <div class="col-xs-8">
+                           @Html.DisplayTextFor(m => m.Address)
+                       </div>
+                   </div>
+                   <div class="form-group col-xs-6">
+                       <label class="col-xs-4">是否默认地址：</label>
+                       <div class="col-xs-8">
+                           @(Model.IsDeleted?"是":"否")
+                       </div>
+                   </div>
+               </div>
+
+               <div class="row">
+                   <div class="form-group col-xs-6">
+                       <label class="col-xs-4">是否启用：</label>
+                       <div class="col-xs-8">
+                           @(Model.IsDeleted ? "是" : "否")
+                       </div>
+                   </div>
+                   <div class="form-group col-xs-6">
+                       <label class="col-xs-4">省市区：</label>
+                       <div class="col-xs-8">
+                           @Html.DisplayTextFor(m => m.ProvinceCityArea)
+                       </div>
+                   </div>
+               </div>
+
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
+        </div>
+
+    </div>
+</div>

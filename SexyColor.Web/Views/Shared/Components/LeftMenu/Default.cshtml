@@ -1,0 +1,51 @@
+﻿@model LeftMenuModel
+@{
+    IEnumerable<PermissionItems> parentsModels = Model.PermissionItemsList.Where(w => w.Parentsid == "0").OrderBy(w => w.DisplayOrder);
+    IEnumerable<string> permissionInRoleModel = Model.PermissionItemsInRolesList;
+}
+<ul class="nav side-menu">
+    @foreach (var parents in parentsModels)
+    {
+        if (Model.IsSuperAdministrator || Model.IsContentAdministrator)
+        {
+            <li>
+                <a><i class="fa fa-home"></i>@parents.Itemname <span class="fa fa-chevron-down"></span></a>
+                @{
+                    IEnumerable<PermissionItems> childModels = Model.PermissionItemsList.Where(w => w.Parentsid == parents.Itemkey && w.ItemType == (int)PermissionItemsType.LeftMenu);
+                }
+                @if (childModels != null && childModels.Count() > 0)
+                {
+                    <ul class="nav child_menu">
+                        @foreach (var child in childModels)
+                        {
+                            <li><a href="@(ReadConfigurationHelper.Instance().GetOriginalUrl(child.ItemUrl))">@child.Itemname</a></li>
+                        }
+                    </ul>
+                }
+            </li>
+        }
+        else
+        {
+            if (permissionInRoleModel.Contains(parents.Itemkey))
+            {
+                IEnumerable<PermissionItems> childModels = Model.PermissionItemsList.Where(w => w.Parentsid == parents.Itemkey && w.ItemType == (int)PermissionItemsType.LeftMenu);
+                <li>
+                    <a><i class="fa fa-home"></i>@parents.Itemname <span class="fa fa-chevron-down"></span></a>
+                    @if (childModels != null && childModels.Count() > 0)
+                    {
+                        <ul class="nav child_menu">
+                            @foreach (var child in childModels)
+                {
+                    if (permissionInRoleModel.Contains(child.Itemkey))
+                    {
+                                    <li><a href="@(ReadConfigurationHelper.Instance().GetOriginalUrl(child.ItemUrl))">@child.Itemname</a></li>
+                                }
+                            }
+                        </ul>
+                    }
+                </li>
+                }
+            }
+        }
+</ul>
+

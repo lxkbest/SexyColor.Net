@@ -1,0 +1,75 @@
+﻿@model PagingDataSet<OrderPayLogs>
+@{
+    Layout = null;
+}
+
+<div>
+    <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+            <h4 class="modal-title">订单支付记录</h4>
+        </div>
+        <div class="jsFansTable modal-body table_form">
+
+            @if (Model.TotalRecords > 0)
+            {
+                <table class="table table-striped jambo_table bulk_action">
+                    <thead>
+                        <tr class="headings">
+                            <th class="column-title">头像</th>
+                            <th class="column-title">用户名/昵称</th>
+                            <th class="column-title">订单号</th>
+                            <th class="column-title">支付方式</th>
+                            <th class="column-title">支付金额</th>
+                            <th class="column-title">是否成功</th>
+                            <th class="column-title">支付时间</th>
+                            <th class="column-title">第三方流水号</th>
+                            <th class="column-title">第三方交易号</th>
+                        </tr>
+                    </thead>
+                    @if (Model != null && Model.TotalRecords > 0)
+                    {
+                        IUserService userService = DIContainer.Resolve<IUserService>();
+                        foreach (OrderPayLogs payLogs in Model)
+                        {
+                            User user = userService.GetFullUser(payLogs.Userid);
+                            <tr></tr>
+                            <tr class="pointer">
+                                <td class="td_user">
+                                    <img title="@(user.UserName)" src="@Utility.HandleImage(user.HeadImg, HeadImageEnum.Original_50)" />
+                                </td>
+                                <td>@(user.UserName)/@(user.NickName)</td>
+                                <td>@(payLogs.OrderNumber)</td>
+                                <td>@Utility.GetDisplayByEnumMemberInfo(typeof(OrderPayType), Enum.Parse(typeof(OrderPayType), payLogs.PayType.ToString()))</td>
+                                <td>@(payLogs.PayMoney)</td>
+                                <td>@(payLogs.IsSuccess ? "成功" : "失败")</td>
+                                <td>@(payLogs.DateCreated.ToDateString(true))</td>
+                                <td>@(payLogs.OtherSerialCode)</td>
+                                <td>@(payLogs.OtherTransactionCode)</td>
+                            </tr>
+
+                        }
+                    }
+                </table>
+                <div>
+                    @Html.PagingResults(Model)
+                    @Html.PagingButton(Model)
+                    <div class="clearfix"></div>
+                </div>
+            }
+            else
+            {
+                <div class="text-center">
+                    搜索不到数据
+                </div>
+            }
+
+
+
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">关 闭</button>
+        </div>
+
+    </div>
+</div>
